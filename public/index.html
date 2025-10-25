@@ -108,6 +108,74 @@
     }
     .bottom-note a { color: var(--primary); text-decoration: none; }
     .bottom-note a:hover { text-decoration: underline; }
+    
+    /* Beautiful toast-style error */
+    .error-toast {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 1055;
+      min-width: 300px;
+      max-width: 90%;
+      background: #dc3545;
+      color: white;
+      border-radius: 12px;
+      box-shadow: 0 8px 25px rgba(220, 53, 69, 0.3);
+      padding: 16px 20px;
+      animation: slideUp 0.3s ease-out;
+    }
+    
+    .error-toast.success {
+      background: #198754;
+      box-shadow: 0 8px 25px rgba(25, 135, 84, 0.3);
+    }
+    
+    .error-toast.warning {
+      background: #ffc107;
+      color: #000;
+      box-shadow: 0 8px 25px rgba(255, 193, 7, 0.3);
+    }
+    
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+      }
+    }
+    
+    .error-content {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    
+    .error-message {
+      flex: 1;
+      font-weight: 500;
+      line-height: 1.4;
+    }
+    
+    .error-close {
+      background: none;
+      border: none;
+      color: inherit;
+      opacity: 0.8;
+      cursor: pointer;
+      padding: 4px;
+      border-radius: 4px;
+      transition: opacity 0.2s;
+    }
+    
+    .error-close:hover {
+      opacity: 1;
+      background: rgba(255, 255, 255, 0.2);
+    }
   </style>
 </head>
 
@@ -127,8 +195,17 @@
       </div>
     </div>
 
-    <div v-if="error" class="container">
-      <error-message :message="error"></error-message>
+    <!-- Beautiful toast-style error -->
+    <div v-if="error" class="error-toast">
+      <div class="error-content">
+        <div class="error-message">
+          <i class="fas fa-exclamation-circle me-2"></i>
+          {{ error }}
+        </div>
+        <button class="error-close" @click="error = null">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
     </div>
 
     <fit-route @show-info="onShowInfo" @error="onError" class="flex-grow-1"></fit-route>
@@ -219,7 +296,7 @@
           <div class="mt-4 d-flex flex-column">
             <div class="d-flex justify-content-around">
               <button class="btn btn-secondary m-2" @click="onClear">Clear</button>
-              <button class="btn btn-primary m-2" @click="onFitDownload">Download as FIT</button>
+              <button class="btn btn-primary m-2" @click="onFitDownload">Export FIT file</button>
             </div>
             <a ref="downloadAnchor" class="d-none" download="COURSE.fit" href="#"></a>
           </div>

@@ -36,7 +36,7 @@ async function onFileUpload(gpxFile) {
   }
 }
 
-function onFitDownload() {
+async function onFitDownload() {
   const optionalTime = (value) => (this.includeTiming ? value : undefined);
 
   try {
@@ -52,7 +52,7 @@ function onFitDownload() {
       start_time: start.time,
       start_position_lat: start.lat,
       start_position_long: start.lon,
-      end_position_lat: start.lat,
+      end_position_lat: finish.lat,
       end_position_long: finish.lon,
       total_distance: finish.distance,
       total_ascent: this.route.eleGain,
@@ -104,15 +104,64 @@ function onFitDownload() {
       });
     }
 
+    const blob = encoder.blob;
+    const fileName = `${this.route.name}.fit`;
+
+    // --- Native (Capacitor) share ---
+    if (window.Capacitor?.isNativePlatform?.()) {
+      const { Filesystem, Share } = window.Capacitor.Plugins;
+
+      // Convert blob to base64 using FileReader
+      const base64Data = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => {
+          const dataUrl = reader.result;
+          resolve(dataUrl.split(',')[1]);
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(blob);
+      });
+
+      // Write file to CACHE directory
+      await Filesystem.writeFile({
+        path: fileName,
+        data: base64Data,
+        directory: 'CACHE',
+        recursive: true
+      });
+
+      // Get URI for sharing
+      const fileUri = await Filesystem.getUri({
+        path: fileName,
+        directory: 'CACHE'
+      });
+
+      // Share the file
+      await Share.share({
+        title: `Share ${this.route.name}.fit`,
+        text: `Check out this route: ${this.route.name}`,
+        url: fileUri.uri,
+        dialogTitle: 'Share FIT File'
+      });
+
+      return;
+    }
+
+    // --- Web fallback ---
     const url = URL.createObjectURL(encoder.blob);
     const anchorElement = this.$refs.downloadAnchor;
     anchorElement.download = `${this.route.name}.fit`;
     anchorElement.href = url;
     anchorElement.click();
     setTimeout(() => URL.revokeObjectURL(url), 100);
+
   } catch (error) {
-    console.error(error);
-    this.$emit('error', `Unable to create FIT`);
+    // Don't show error for user cancellation
+    if (error.message.includes('canceled') || error.message.includes('cancelled') || error.message.includes('dismissed')) {
+      return;
+    }
+    console.error('FIT export error:', error);
+    this.$emit('error', `Unable to create FIT: ${error.message}`);
   }
 }
 
