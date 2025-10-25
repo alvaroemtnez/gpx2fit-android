@@ -15,7 +15,7 @@ function onFileSelect(event) {
     if (!isValidGpx) {
       // Not a GPX file, reset and show error
       event.target.value = ''; // Clear the input
-      this.$emit('error', 'Please select a valid GPX file');
+      this.$emit('error', 'Select a valid GPX file');
       return;
     }
     
