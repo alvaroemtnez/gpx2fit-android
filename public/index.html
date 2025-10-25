@@ -257,7 +257,7 @@
   <script type="text/x-template" id="fit-route-template">
     <div class="d-flex flex-column w-100 h-100">
       <template v-if="!gpxFile">
-        <file-upload @submit="onFileUpload"></file-upload>
+        <file-upload @submit="onFileUpload" @error="onError"></file-upload>
       </template>
       <template v-if="route">
       <div class="d-flex flex-column w-100 flex-grow-1">

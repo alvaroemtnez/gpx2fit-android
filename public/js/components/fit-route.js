@@ -25,6 +25,10 @@ function onClear() {
   this.$emit('show-info', true);
 }
 
+function onError(errorMessage) {
+  this.$emit('error', errorMessage);
+}
+
 async function onFileUpload(gpxFile) {
   try {
     this.gpxFile = gpxFile;
@@ -177,6 +181,7 @@ const FitRoute = {
   methods: {
     onClear,
     onFileUpload,
+    onError,
     onFitDownload,
     setName,
     setDuration
