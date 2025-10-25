@@ -4,3 +4,23 @@ node_modules
 *.iml
 
 *.code-workspace
+
+# Dependencies (will be downloaded by setup script)
+public/css/bootstrap.min.css
+public/css/leaflet.css
+public/css/leaflet-fullscreen.css
+public/css/fontawesome/
+public/css/webfonts/
+public/js/vue.global.prod.js
+public/js/leaflet.js
+public/js/leaflet-fullscreen.js
+public/css/images/layers-2x.png
+public/css/images/layers.png
+public/css/images/marker-icon-2x.png
+public/css/images/marker-icon.png
+public/css/images/marker-shadow.png
+public/css/icon-fullscreen.svg
+
+# Temporary files
+fontawesome.zip
+*.tmp
