@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 # setup-offline.sh - Setup all dependencies for offline use
 
 echo "Setting up offline dependencies for GPX2FIT Converter..."
