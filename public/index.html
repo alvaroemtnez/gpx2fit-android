@@ -76,14 +76,15 @@
       margin-top: 2rem;
     }
     .top-card img {
-      width: 96px;
-      height: 96px;
+      width: 128px;
+      height: 128px;
       border-radius: 50%;
+      margin-top: 2rem;
       margin-bottom: 1rem;
     }
     .top-card h1 {
       margin-top: 0.5rem;
-      font-size: 1.8rem;
+      font-size: 2rem;
       font-weight: 500;
     }
     .middle-card {
@@ -183,19 +184,6 @@
 <body>
   <main id="main" class="flex-grow-1 d-flex flex-column w-100 h-100">
 
-    <!-- Minimal first screen -->
-    <div v-if="showInfo" class="d-flex flex-column align-items-center justify-content-center flex-grow-1 p-3 w-100">
-      <div class="top-card">
-        <img src="images/logo-196.png" alt="App Icon">
-        <h1>GPX2FIT Converter</h1>
-      </div>
-
-      <div class="bottom-note">
-        <a href="https://gitlab.com/alvaroemtnez/gpx2fit-android" target="_blank">Source code</a>. 
-        Based in <a href="https://gitlab.com/nwholloway/fit-route" target="_blank">fit-route by Nick Holloway</a>.
-      </div>
-    </div>
-
     <!-- Beautiful toast-style error -->
     <div v-if="error" class="error-toast">
       <div class="error-content">
@@ -228,34 +216,43 @@
   <script type="text/x-template" id="empty-template"></script>
 
   <script type="text/x-template" id="file-upload-template">
-    <form enctype="multipart/form-data" novalidate>
-      <div class="d-flex flex-column justify-content-center align-items-center w-100">
+    <form enctype="multipart/form-data" novalidate class="h-100 w-100">
+      <div class="d-flex flex-column justify-content-between align-items-center w-100 h-100 position-relative">
 
-        <!-- Hidden file input -->
-        <input
-          v-if="!file"
-          type="file"
-          title=" "
-          aria-label="Select GPX"
-          accept=".gpx,application/gpx+xml,application/octet-stream"
-          style="display:none"
-          ref="fileInput"
-          @change="
-            file = $event.target.files[0];
-            if(file) onSubmit();
-          "
-        >
-
-        <!-- Blue button triggers file input -->
-        <button v-if="!file" type="button" class="btn btn-primary" @click="$refs.fileInput.click()">
-          Select GPX file to start...
-        </button>
-
-        <!-- Once file is selected, show filename only -->
-        <div v-else class="text-center mt-3">
-          {{ file.name }}
+        <!-- Top section - title/icon -->
+        <div class="top-card">
+          <img src="images/logo-196.png" alt="App Icon">
+          <h1>GPX2FIT Converter</h1>
         </div>
 
+        <!-- Middle section - button -->
+        <div class="d-flex justify-content-center align-items-center flex-grow-1">
+          <!-- Hidden file input -->
+          <input
+            v-if="!file"
+            type="file"
+            title=" "
+            aria-label="Select GPX"
+            accept=".gpx,application/gpx+xml,application/octet-stream"
+            style="display:none"
+            ref="fileInput"
+            @change="
+              file = $event.target.files[0];
+              if(file) onSubmit();
+            "
+          >
+
+          <!-- Simple blue button -->
+          <button v-if="!file" type="button" class="file-btn" @click="$refs.fileInput.click()">
+            Select GPX file to start...
+          </button>
+        </div>
+
+        <!-- Bottom section - source code note -->
+        <div class="bottom-note">
+          <a href="https://gitlab.com/alvaroemtnez/gpx2fit-android" target="_blank">Source code</a>. 
+          Based in <a href="https://gitlab.com/nwholloway/fit-route" target="_blank">fit-route by Nick Holloway</a>.
+        </div>
       </div>
     </form>
   </script>
