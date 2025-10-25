@@ -236,10 +236,7 @@
             accept=".gpx,application/gpx+xml,application/octet-stream"
             style="display:none"
             ref="fileInput"
-            @change="
-              file = $event.target.files[0];
-              if(file) onSubmit();
-            "
+            @change="onFileSelect"
           >
 
           <!-- Simple blue button -->
