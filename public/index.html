@@ -21,55 +21,211 @@
 
   <style>
     :root {
-      color-scheme: light dark;
-      --primary: #0061a8;
-      --bg: #ffffff;
-      --bg-dark: #121212;
-      --text: #1a1a1a;
-      --text-dark: #eaeaea;
+        color-scheme: light dark;
+        
+        /* Default light theme variables */
+        --primary: #0061a8;
+        --primary-container: #d2e4ff;
+        --on-primary: #ffffff;
+        --secondary: #545f70;
+        --secondary-container: #d8e3f8;
+        --on-secondary: #ffffff;
+        --surface: #fefbff;
+        --on-surface: #1b1b1f;
+        --surface-variant: #dfe2eb;
+        --on-surface-variant: #43474e;
+        --background: #fefbff;
+        --error: #ba1a1a;
+        --on-error: #ffffff;
+        
+        /* Bootstrap overrides for light theme */
+        --bs-primary: #0061a8;
+        --bs-secondary: #6c757d;
+        --bs-success: #198754;
+        --bs-info: #0dcaf0;
+        --bs-warning: #ffc107;
+        --bs-danger: #dc3545;
+        --bs-light: #f8f9fa;
+        --bs-dark: #212529;
+        --bs-body-bg: #fefbff;
+        --bs-body-color: #1b1b1f;
     }
+
+    /* System dark theme (for browsers) */
     @media (prefers-color-scheme: dark) {
-      body { background: var(--bg-dark); color: var(--text-dark); }
+        :root:not([data-theme]):not(.material-light):not(.material-dark) {
+            --primary: #a0c9ff;
+            --primary-container: #00497d;
+            --on-primary: #003258;
+            --secondary: #bcc7db;
+            --secondary-container: #3c4758;
+            --on-secondary: #263141;
+            --surface: #1b1b1f;
+            --on-surface: #e4e2e6;
+            --surface-variant: #43474e;
+            --on-surface-variant: #c3c6cf;
+            --background: #1b1b1f;
+            --error: #ffb4ab;
+            --on-error: #690005;
+            
+            /* Bootstrap overrides for dark theme */
+            --bs-primary: #a0c9ff;
+            --bs-secondary: #bcc7db;
+            --bs-body-bg: #1b1b1f;
+            --bs-body-color: #e4e2e6;
+            --bs-light: #343a40;
+            --bs-dark: #f8f9fa;
+        }
     }
+
+    /* Explicit dark theme class (for JavaScript control) */
+    .dark-theme, [data-theme="dark"] {
+        --primary: #a0c9ff;
+        --primary-container: #00497d;
+        --on-primary: #003258;
+        --secondary: #bcc7db;
+        --secondary-container: #3c4758;
+        --on-secondary: #263141;
+        --surface: #1b1b1f;
+        --on-surface: #e4e2e6;
+        --surface-variant: #43474e;
+        --on-surface-variant: #c3c6cf;
+        --background: #1b1b1f;
+        --error: #ffb4ab;
+        --on-error: #690005;
+        
+        --bs-primary: #a0c9ff;
+        --bs-secondary: #bcc7db;
+        --bs-body-bg: #1b1b1f;
+        --bs-body-color: #e4e2e6;
+        --bs-light: #343a40;
+        --bs-dark: #f8f9fa;
+    }
+
+    /* Explicit light theme class (for JavaScript control) */
+    .light-theme, [data-theme="light"] {
+        --primary: #0061a8;
+        --primary-container: #d2e4ff;
+        --on-primary: #ffffff;
+        --secondary: #545f70;
+        --secondary-container: #d8e3f8;
+        --on-secondary: #ffffff;
+        --surface: #fefbff;
+        --on-surface: #1b1b1f;
+        --surface-variant: #dfe2eb;
+        --on-surface-variant: #43474e;
+        --background: #fefbff;
+        --error: #ba1a1a;
+        --on-error: #ffffff;
+        
+        --bs-primary: #0061a8;
+        --bs-secondary: #6c757d;
+        --bs-body-bg: #fefbff;
+        --bs-body-color: #1b1b1f;
+    }
+
+    /* Common styles that apply to all themes */
     html, body {
-      height: 100%;
-      margin: 0;
-      overflow: hidden; /* prevent scrolling */
+        height: 100%;
+        margin: 0;
+        overflow: hidden;
+        background: var(--background);
+        color: var(--on-surface);
+        transition: background-color 0.3s ease, color 0.3s ease;
     }
+    
     #main {
-      display: flex;
-      flex-direction: column;
-      height: 100%;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        background: var(--background);
     }
-    /* Ensure fit-route stretches fully */
+
+    /* Dark theme specific overrides */
+    .dark-theme .bg-light,
+    [data-theme="dark"] .bg-light,
+    .material-dark .bg-light {
+        background-color: var(--surface-variant) !important;
+        color: var(--on-surface-variant);
+    }
+    
+    .dark-theme .form-control,
+    [data-theme="dark"] .form-control,
+    .material-dark .form-control {
+        background-color: var(--surface-variant);
+        color: var(--on-surface-variant);
+        border-color: var(--secondary-container);
+    }
+    
+    .dark-theme .form-control:focus,
+    [data-theme="dark"] .form-control:focus,
+    .material-dark .form-control:focus {
+        background-color: var(--surface-variant);
+        color: var(--on-surface-variant);
+        border-color: var(--primary);
+    }
+    
+    .dark-theme .btn-outline-secondary,
+    [data-theme="dark"] .btn-outline-secondary,
+    .material-dark .btn-outline-secondary {
+        color: var(--secondary);
+        border-color: var(--secondary);
+    }
+    
+    .dark-theme .btn-outline-secondary:hover,
+    .dark-theme .btn-outline-secondary.active,
+    [data-theme="dark"] .btn-outline-secondary:hover,
+    [data-theme="dark"] .btn-outline-secondary.active,
+    .material-dark .btn-outline-secondary:hover,
+    .material-dark .btn-outline-secondary.active {
+        background-color: var(--secondary);
+        color: var(--on-secondary);
+        border-color: var(--secondary);
+    }
+    
+    .dark-theme .text-primary,
+    [data-theme="dark"] .text-primary,
+    .material-dark .text-primary {
+        color: var(--primary) !important;
+    }
+    
+    .dark-theme .bg-primary,
+    [data-theme="dark"] .bg-primary,
+    .material-dark .bg-primary {
+        background-color: var(--primary) !important;
+        color: var(--on-primary) !important;
+    }
+
+    /* Your existing styles continue below... */
     fit-route {
-      display: flex;
-      flex-direction: column;
-      flex: 1 1 auto;
-      min-height: 0; /* critical for flex children to shrink properly */
+        display: flex;
+        flex-direction: column;
+        flex: 1 1 auto;
+        min-height: 0;
     }
-    /* Make the inner container of fit-route also fill height */
+    
     fit-route > div {
-      display: flex;
-      flex-direction: column;
-      flex: 1 1 auto;
-      min-height: 0;
+        display: flex;
+        flex-direction: column;
+        flex: 1 1 auto;
+        min-height: 0;
+        background: var(--background);
     }
-    /* Make the map fill all remaining space */
+    
     #route-map {
-      flex: 1 1 auto;
-      min-height: 0; /* important for flexbox */
+        flex: 1 1 auto;
+        min-height: 0;
+        background: var(--surface);
     }
+    
     body {
-      font-family: 'Roboto', sans-serif;
-      margin: 0;
-      display: flex;
-      flex-direction: column;
-      min-height: 100vh;
-      align-items: center;
-      justify-content: space-between;
-      background: var(--bg);
-      color: var(--text);
+        font-family: 'Roboto', sans-serif;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+        align-items: center;
+        justify-content: space-between;
     }
     .top-card {
       text-align: center;
@@ -178,6 +334,48 @@
       opacity: 1;
       background: rgba(255, 255, 255, 0.2);
     }
+    /* Ensure all Vue components inherit theme colors */
+    fit-route,
+    file-upload,
+    route-info,
+    route-map {
+        background: var(--background);
+        color: var(--on-surface);
+    }
+
+    /* Ensure the map container respects dark theme */
+    #route-map.leaflet-container {
+        background: var(--surface) !important;
+    }
+
+    /* Ensure form controls in dark theme */
+    .dark-theme input[type="text"],
+    .dark-theme input[type="number"],
+    .dark-theme select,
+    [data-theme="dark"] input[type="text"],
+    [data-theme="dark"] input[type="number"], 
+    [data-theme="dark"] select,
+    .material-dark input[type="text"],
+    .material-dark input[type="number"],
+    .material-dark select {
+        background-color: var(--surface-variant);
+        color: var(--on-surface-variant);
+        border-color: var(--secondary-container);
+    }
+
+    .dark-theme input[type="text"]:focus,
+    .dark-theme input[type="number"]:focus,
+    .dark-theme select:focus,
+    [data-theme="dark"] input[type="text"]:focus,
+    [data-theme="dark"] input[type="number"]:focus,
+    [data-theme="dark"] select:focus,
+    .material-dark input[type="text"]:focus,
+    .material-dark input[type="number"]:focus,
+    .material-dark select:focus {
+        background-color: var(--surface-variant);
+        color: var(--on-surface-variant);
+        border-color: var(--primary);
+    }
   </style>
 </head>
 
@@ -201,6 +399,7 @@
   </main>
 
   <!-- Local offline JavaScript files -->
+  <script src="js/theme-detector.js"></script>
   <script src="js/vue.global.prod.js"></script>
   <script src="js/leaflet.js"></script>
   <script src="js/leaflet-fullscreen.js"></script>
