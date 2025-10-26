@@ -53,7 +53,7 @@
 
     /* System dark theme (for browsers) */
     @media (prefers-color-scheme: dark) {
-        :root:not([data-theme]):not(.material-light):not(.material-dark) {
+        :root:not([data-theme]) {
             --primary: #a0c9ff;
             --primary-container: #00497d;
             --on-primary: #003258;
@@ -143,31 +143,27 @@
 
     /* Dark theme specific overrides */
     .dark-theme .bg-light,
-    [data-theme="dark"] .bg-light,
-    .material-dark .bg-light {
+    [data-theme="dark"] .bg-light {
         background-color: var(--surface-variant) !important;
         color: var(--on-surface-variant);
     }
     
     .dark-theme .form-control,
-    [data-theme="dark"] .form-control,
-    .material-dark .form-control {
+    [data-theme="dark"] .form-control {
         background-color: var(--surface-variant);
         color: var(--on-surface-variant);
         border-color: var(--secondary-container);
     }
     
     .dark-theme .form-control:focus,
-    [data-theme="dark"] .form-control:focus,
-    .material-dark .form-control:focus {
+    [data-theme="dark"] .form-control:focus {
         background-color: var(--surface-variant);
         color: var(--on-surface-variant);
         border-color: var(--primary);
     }
     
     .dark-theme .btn-outline-secondary,
-    [data-theme="dark"] .btn-outline-secondary,
-    .material-dark .btn-outline-secondary {
+    [data-theme="dark"] .btn-outline-secondary {
         color: var(--secondary);
         border-color: var(--secondary);
     }
@@ -175,28 +171,24 @@
     .dark-theme .btn-outline-secondary:hover,
     .dark-theme .btn-outline-secondary.active,
     [data-theme="dark"] .btn-outline-secondary:hover,
-    [data-theme="dark"] .btn-outline-secondary.active,
-    .material-dark .btn-outline-secondary:hover,
-    .material-dark .btn-outline-secondary.active {
+    [data-theme="dark"] .btn-outline-secondary.active {
         background-color: var(--secondary);
         color: var(--on-secondary);
         border-color: var(--secondary);
     }
     
     .dark-theme .text-primary,
-    [data-theme="dark"] .text-primary,
-    .material-dark .text-primary {
+    [data-theme="dark"] .text-primary {
         color: var(--primary) !important;
     }
     
     .dark-theme .bg-primary,
-    [data-theme="dark"] .bg-primary,
-    .material-dark .bg-primary {
+    [data-theme="dark"] .bg-primary {
         background-color: var(--primary) !important;
         color: var(--on-primary) !important;
     }
 
-    /* Your existing styles continue below... */
+    /* Component styles */
     fit-route {
         display: flex;
         flex-direction: column;
@@ -334,6 +326,7 @@
       opacity: 1;
       background: rgba(255, 255, 255, 0.2);
     }
+    
     /* Ensure all Vue components inherit theme colors */
     fit-route,
     file-upload,
@@ -354,10 +347,7 @@
     .dark-theme select,
     [data-theme="dark"] input[type="text"],
     [data-theme="dark"] input[type="number"], 
-    [data-theme="dark"] select,
-    .material-dark input[type="text"],
-    .material-dark input[type="number"],
-    .material-dark select {
+    [data-theme="dark"] select {
         background-color: var(--surface-variant);
         color: var(--on-surface-variant);
         border-color: var(--secondary-container);
@@ -368,10 +358,7 @@
     .dark-theme select:focus,
     [data-theme="dark"] input[type="text"]:focus,
     [data-theme="dark"] input[type="number"]:focus,
-    [data-theme="dark"] select:focus,
-    .material-dark input[type="text"]:focus,
-    .material-dark input[type="number"]:focus,
-    .material-dark select:focus {
+    [data-theme="dark"] select:focus {
         background-color: var(--surface-variant);
         color: var(--on-surface-variant);
         border-color: var(--primary);
