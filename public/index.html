@@ -32,8 +32,9 @@
         --on-secondary: #ffffff;
         --surface: #fefbff;
         --on-surface: #1b1b1f;
-        --surface-variant: #dfe2eb;
+        --surface-variant: #f8f9fa; /* Lighter gray for enabled inputs */
         --on-surface-variant: #43474e;
+        --surface-disabled: #e9ecef; /* Darker gray for disabled inputs - matches clear button */
         --background: #fefbff;
         --error: #ba1a1a;
         --on-error: #ffffff;
@@ -62,8 +63,9 @@
             --on-secondary: #ffffff;
             --surface: #1b1b1f;
             --on-surface: #e4e2e6;
-            --surface-variant: #1b1b1f; /* Same as background for consistency */
+            --surface-variant: #2d3038; /* Light gray for enabled inputs */
             --on-surface-variant: #c3c6cf;
+            --surface-disabled: #1b1b1f; /* Dark gray for disabled inputs - matches clear button */
             --background: #1b1b1f;
             --error: #ffb4ab;
             --on-error: #690005;
@@ -88,8 +90,9 @@
         --on-secondary: #ffffff;
         --surface: #1b1b1f;
         --on-surface: #e4e2e6;
-        --surface-variant: #1b1b1f; /* Same as background for consistency */
+        --surface-variant: #2d3038; /* Light gray for enabled inputs */
         --on-surface-variant: #c3c6cf;
+        --surface-disabled: #1b1b1f; /* Dark gray for disabled inputs - matches clear button */
         --background: #1b1b1f;
         --error: #ffb4ab;
         --on-error: #690005;
@@ -112,8 +115,9 @@
         --on-secondary: #ffffff;
         --surface: #fefbff;
         --on-surface: #1b1b1f;
-        --surface-variant: #dfe2eb;
+        --surface-variant: #f8f9fa; /* Lighter gray for enabled inputs */
         --on-surface-variant: #43474e;
+        --surface-disabled: #e9ecef; /* Darker gray for disabled inputs - matches clear button */
         --background: #fefbff;
         --error: #ba1a1a;
         --on-error: #ffffff;
@@ -122,6 +126,7 @@
         --bs-secondary: #6c757d;
         --bs-body-bg: #fefbff;
         --bs-body-color: #1b1b1f;
+        --bs-light: #fefbff; /* Match the file selection screen background */
     }
 
     /* Common styles that apply to all themes */
@@ -141,33 +146,45 @@
         background: var(--background);
     }
 
+    /* Text input styling for BOTH themes */
+    .form-control {
+        background-color: var(--surface-variant) !important;
+        color: var(--on-surface-variant) !important;
+        border-color: var(--secondary-container) !important;
+    }
+
+    .form-control:focus {
+        background-color: var(--surface-variant) !important;
+        color: var(--on-surface-variant) !important;
+        border-color: var(--primary) !important;
+        box-shadow: 0 0 0 0.2rem rgba(0, 97, 168, 0.25) !important;
+    }
+
+    /* Disabled inputs and unit labels - darker gray */
+    .form-control:disabled,
+    .form-control.bg-light,
+    .input-group-text {
+        background-color: var(--surface-disabled) !important;
+        color: var(--on-surface-variant) !important;
+        border-color: var(--secondary-container) !important;
+    }
+
+    /* Input group styling */
+    .input-group .form-control:not(:first-child) {
+        border-left: 0;
+    }
+
+    .input-group .input-group-text {
+        border-left: 0;
+    }
+
     /* Dark theme specific overrides */
     .dark-theme .bg-light,
     [data-theme="dark"] .bg-light {
         background-color: var(--surface-variant) !important;
         color: var(--on-surface-variant);
     }
-    
-    .dark-theme .form-control,
-    [data-theme="dark"] .form-control {
-        background-color: var(--surface-variant);
-        color: var(--on-surface-variant);
-        border-color: var(--secondary-container);
-    }
-    
-    .dark-theme .form-control:focus,
-    [data-theme="dark"] .form-control:focus {
-        background-color: var(--surface-variant);
-        color: var(--on-surface-variant);
-        border-color: var(--primary);
-    }
 
-    .dark-theme .form-control.bg-light,
-    [data-theme="dark"] .form-control.bg-light {
-        background-color: var(--surface-variant) !important;
-        color: var(--on-surface-variant);
-    }
-    
     .dark-theme .btn-outline-secondary,
     [data-theme="dark"] .btn-outline-secondary {
         color: var(--secondary);
@@ -194,11 +211,10 @@
         color: var(--on-primary) !important;
     }
 
-    /* Fix for the settings panel in dark theme */
-    .dark-theme .bg-light.p-3,
-    [data-theme="dark"] .bg-light.p-3 {
-        background-color: var(--surface-variant) !important;
-        color: var(--on-surface-variant);
+    /* Fix for the settings panel in BOTH themes */
+    .bg-light.p-3 {
+        background-color: var(--background) !important;
+        color: var(--on-surface);
         border-bottom: 1px solid var(--secondary-container);
     }
 
@@ -212,6 +228,19 @@
     .btn-primary:hover {
         background-color: #004d80 !important;
         border-color: #004d80 !important;
+    }
+
+    /* Secondary button styling (Clear button) */
+    .btn-secondary {
+        background-color: var(--surface-disabled) !important;
+        border-color: var(--secondary-container) !important;
+        color: var(--on-surface-variant) !important;
+    }
+
+    .btn-secondary:hover {
+        background-color: var(--secondary-container) !important;
+        border-color: var(--secondary-container) !important;
+        color: var(--on-secondary) !important;
     }
 
     /* Radio buttons styling for BOTH themes */
@@ -386,32 +415,9 @@
         color: var(--on-surface);
     }
 
-    /* Ensure the map container respects dark theme */
+    /* Ensure the map container respects theme */
     #route-map.leaflet-container {
         background: var(--surface) !important;
-    }
-
-    /* Ensure form controls in dark theme */
-    .dark-theme input[type="text"],
-    .dark-theme input[type="number"],
-    .dark-theme select,
-    [data-theme="dark"] input[type="text"],
-    [data-theme="dark"] input[type="number"], 
-    [data-theme="dark"] select {
-        background-color: var(--surface-variant);
-        color: var(--on-surface-variant);
-        border-color: var(--secondary-container);
-    }
-
-    .dark-theme input[type="text"]:focus,
-    .dark-theme input[type="number"]:focus,
-    .dark-theme select:focus,
-    [data-theme="dark"] input[type="text"]:focus,
-    [data-theme="dark"] input[type="number"]:focus,
-    [data-theme="dark"] select:focus {
-        background-color: var(--surface-variant);
-        color: var(--on-surface-variant);
-        border-color: var(--primary);
     }
   </style>
 </head>
