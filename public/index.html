@@ -548,11 +548,11 @@
         <!-- Editor controls -->
         <div class="bg-light p-3">
           <form novalidate>
-            <div class="d-flex justify-content-center py-3">
+            <div class="d-flex justify-content-center py-2">
               <input class="btn-check" id="km" type="radio" value="km" v-model="units">
-              <label class="btn btn-outline-secondary w-25 mx-1" :class="{ active: units == 'km' }" for="km">km</label>
+              <label class="btn btn-outline-secondary w-25 mx-1 px-2" :class="{ active: units == 'km' }" for="km">km</label>
               <input class="btn-check" id="miles" type="radio" value="miles" v-model="units">
-              <label class="btn btn-outline-secondary w-25 mx-1" :class="{ active: units == 'miles' }" for="miles">miles</label>
+              <label class="btn btn-outline-secondary w-25 mx-1 px-2" :class="{ active: units == 'miles' }" for="miles">miles</label>
             </div>
           </form>
 
@@ -561,13 +561,19 @@
           <form novalidate>
             <div class="mb-1">
               <label class="form-label">Include</label>
-              <div class="form-check form-switch ms-2">
-                <input class="form-check-input" type="checkbox" id="includeTiming" v-model="includeTiming" :disabled="true">
-                <label class="form-check-label" for="includeTiming">Timing</label>
-              </div>
-              <div class="form-check form-switch ms-2">
-                <input class="form-check-input" type="checkbox" id="includeTurns" v-model="includeTurns">
-                <label class="form-check-label" for="includeTurns">Turn Alerts</label>
+              <div class="row">
+                <div class="col-6">
+                  <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="includeTiming" v-model="includeTiming" :disabled="true">
+                    <label class="form-check-label" for="includeTiming">Timing</label>
+                  </div>
+                </div>
+                <div class="col-6">
+                  <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="includeTurns" v-model="includeTurns">
+                    <label class="form-check-label" for="includeTurns">Turn Alerts</label>
+                  </div>
+                </div>
               </div>
             </div>
           </form>
@@ -576,6 +582,13 @@
             <div class="d-flex justify-content-around">
               <button class="btn btn-secondary m-2" @click="onClear">Clear</button>
               <button class="btn btn-primary m-2" @click="onFitDownload">Export FIT file</button>
+            </div>
+            <!-- Gadgetbridge tip for Android app -->
+            <div id="gadgetbridge-tip-settings" style="display: none; margin-top: 1rem; position: relative;" class="alert alert-info py-2">
+              <button type="button" class="btn-close" style="font-size: 0.7rem; padding: 0.3rem;" aria-label="Close" onclick="dismissGadgetbridgeTip()"></button>
+              <small class="text-muted">
+                Tip: use <a href="https://gadgetbridge.org/" target="_blank">Gadgetbridge</a> to send your FIT track to your Garmin device without Garmin Connect.
+              </small>
             </div>
             <a ref="downloadAnchor" class="d-none" download="COURSE.fit" href="#"></a>
           </div>
@@ -600,21 +613,20 @@
           <label class="form-label" for="distance">Distance</label>
           <div class="input-group">
             <input id="distance" type="text" v-model="distance" readonly class="form-control text-primary bg-light">
-            <div class="input-group-text">{{ units }}</div>
+            <div class="input-group-text" style="min-width: 3rem;">{{ units }}</div>
           </div>
         </div>
-        <div class="mb-3">
-          <label class="form-label" for="speed">Average Speed</label>
-          <div class="input-group">
-            <input id="speed" type="text" v-model="avgSpeedField" class="form-control text-primary" data-lpignore="true">
-            <div class="input-group-text">{{ speedUnits }}</div>
+        <div class="row mb-3">
+          <div class="col-6">
+            <label class="form-label" for="speed">Avg Speed</label>
+            <div class="input-group">
+              <input id="speed" type="text" v-model="avgSpeedField" class="form-control text-primary" data-lpignore="true">
+              <div class="input-group-text" style="min-width: 3rem;">{{ speedUnits }}</div>
+            </div>
           </div>
-        </div>
-        <div class="mb-3">
-          <label class="form-label" for="time">Goal Time</label>
-          <div class="input-group">
+          <div class="col-6">
+            <label class="form-label" for="time">Goal Time</label>
             <input id="time" type="text" v-model="goalTime" readonly class="form-control text-primary bg-light">
-            <span class="input-group-text">h:mm:ss</span>
           </div>
         </div>
       </div>
@@ -623,6 +635,61 @@
 
   <script type="text/x-template" id="route-map-template">
     <div id="route-map" class="bg-light w-100 flex-grow-1"></div>
+  </script>
+
+  <script>
+    // Check if user has dismissed the Gadgetbridge tip
+    function hasDismissedGadgetbridgeTip() {
+      return localStorage.getItem('gadgetbridgeTipDismissed') === 'true';
+    }
+
+    // Dismiss the tip and remember preference
+    function dismissGadgetbridgeTip() {
+      const tipElement = document.getElementById('gadgetbridge-tip-settings');
+      if (tipElement) {
+        tipElement.style.display = 'none';
+      }
+      localStorage.setItem('gadgetbridgeTipDismissed', 'true');
+    }
+
+    // Show Gadgetbridge tip only in Capacitor Android app and if not dismissed
+    function showGadgetbridgeTip() {
+      const gadgetbridgeTipSettings = document.getElementById('gadgetbridge-tip-settings');
+      
+      // Check if we're in a Capacitor Android environment and tip hasn't been dismissed
+      const isAndroidApp = (typeof Capacitor !== 'undefined' && Capacitor.getPlatform && Capacitor.getPlatform() === 'android') ||
+                          (window.androidBridge || (/android/i.test(navigator.userAgent) && /capacitor/i.test(navigator.userAgent)));
+      
+      if (isAndroidApp && gadgetbridgeTipSettings && !hasDismissedGadgetbridgeTip()) {
+        gadgetbridgeTipSettings.style.display = 'block';
+      } else if (gadgetbridgeTipSettings) {
+        gadgetbridgeTipSettings.style.display = 'none';
+      }
+    }
+
+    // Try to show the tip when the page loads
+    document.addEventListener('DOMContentLoaded', showGadgetbridgeTip);
+    
+    // Also try after a short delay in case Vue hasn't rendered yet
+    setTimeout(showGadgetbridgeTip, 500);
+    
+    // And try again after a longer delay to catch any dynamic rendering
+    setTimeout(showGadgetbridgeTip, 1000);
+    
+    // Set up a MutationObserver to watch for DOM changes
+    const observer = new MutationObserver(function(mutations) {
+      mutations.forEach(function(mutation) {
+        if (mutation.addedNodes && mutation.addedNodes.length > 0) {
+          showGadgetbridgeTip();
+        }
+      });
+    });
+    
+    // Start observing
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true
+    });
   </script>
 </body>
 </html>
