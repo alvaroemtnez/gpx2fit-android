@@ -27,21 +27,21 @@
         --primary: #0061a8;
         --primary-container: #d2e4ff;
         --on-primary: #ffffff;
-        --secondary: #545f70;
+        --secondary: #6c757d; /* Changed to match Bootstrap's secondary color */
         --secondary-container: #d8e3f8;
         --on-secondary: #ffffff;
         --surface: #fefbff;
         --on-surface: #1b1b1f;
-        --surface-variant: #f8f9fa; /* Lighter gray for enabled inputs */
+        --surface-variant: #f8f9fa;
         --on-surface-variant: #43474e;
-        --surface-disabled: #e9ecef; /* Darker gray for disabled inputs - matches clear button */
+        --surface-disabled: #e9ecef;
         --background: #fefbff;
         --error: #ba1a1a;
         --on-error: #ffffff;
         
         /* Bootstrap overrides for light theme */
         --bs-primary: #0061a8;
-        --bs-secondary: #6c757d;
+        --bs-secondary: #6c757d; /* This is Bootstrap's default gray */
         --bs-success: #198754;
         --bs-info: #0dcaf0;
         --bs-warning: #ffc107;
@@ -58,21 +58,21 @@
             --primary: #0061a8;
             --primary-container: #00497d;
             --on-primary: #ffffff;
-            --secondary: #bcc7db;
+            --secondary: #6c757d; /* Keep consistent gray */
             --secondary-container: #3c4758;
             --on-secondary: #ffffff;
             --surface: #1b1b1f;
             --on-surface: #e4e2e6;
-            --surface-variant: #2d3038; /* Light gray for enabled inputs */
+            --surface-variant: #2d3038;
             --on-surface-variant: #c3c6cf;
-            --surface-disabled: #1b1b1f; /* Dark gray for disabled inputs - matches clear button */
+            --surface-disabled: #1b1b1f;
             --background: #1b1b1f;
             --error: #ffb4ab;
             --on-error: #690005;
             
             /* Bootstrap overrides for dark theme */
             --bs-primary: #0061a8;
-            --bs-secondary: #bcc7db;
+            --bs-secondary: #6c757d; /* Keep consistent gray */
             --bs-body-bg: #1b1b1f;
             --bs-body-color: #e4e2e6;
             --bs-light: #1b1b1f;
@@ -85,20 +85,20 @@
         --primary: #0061a8;
         --primary-container: #00497d;
         --on-primary: #ffffff;
-        --secondary: #bcc7db;
+        --secondary: #6c757d; /* Keep consistent gray */
         --secondary-container: #3c4758;
         --on-secondary: #ffffff;
         --surface: #1b1b1f;
         --on-surface: #e4e2e6;
-        --surface-variant: #2d3038; /* Light gray for enabled inputs */
+        --surface-variant: #2d3038;
         --on-surface-variant: #c3c6cf;
-        --surface-disabled: #1b1b1f; /* Dark gray for disabled inputs - matches clear button */
+        --surface-disabled: #1b1b1f;
         --background: #1b1b1f;
         --error: #ffb4ab;
         --on-error: #690005;
         
         --bs-primary: #0061a8;
-        --bs-secondary: #bcc7db;
+        --bs-secondary: #6c757d; /* Keep consistent gray */
         --bs-body-bg: #1b1b1f;
         --bs-body-color: #e4e2e6;
         --bs-light: #1b1b1f;
@@ -162,11 +162,26 @@
 
     /* Disabled inputs and unit labels - darker gray */
     .form-control:disabled,
-    .form-control.bg-light,
+    .form-control.bg-light {
+        background-color: var(--surface-disabled) !important;
+        color: var(--on-surface-variant) !important;
+        border-color: var(--secondary-container) !important;
+    }
+
+    /* Unit labels should match the background in dark mode */
     .input-group-text {
         background-color: var(--surface-disabled) !important;
         color: var(--on-surface-variant) !important;
         border-color: var(--secondary-container) !important;
+    }
+
+    /* Dark theme specific overrides for disabled fields */
+    .dark-theme .form-control:disabled,
+    .dark-theme .form-control.bg-light,
+    [data-theme="dark"] .form-control:disabled,
+    [data-theme="dark"] .form-control.bg-light {
+        background-color: var(--background) !important;
+        color: var(--on-surface-variant) !important;
     }
 
     /* Input group styling */
@@ -176,6 +191,11 @@
 
     .input-group .input-group-text {
         border-left: 0;
+    }
+
+    /* Fix blue text color in dark mode - use same color as labels */
+    .text-primary {
+        color: var(--on-surface-variant) !important;
     }
 
     /* Dark theme specific overrides */
@@ -198,11 +218,6 @@
         background-color: var(--secondary);
         color: var(--on-secondary);
         border-color: var(--secondary);
-    }
-    
-    .dark-theme .text-primary,
-    [data-theme="dark"] .text-primary {
-        color: var(--primary) !important;
     }
     
     .dark-theme .bg-primary,
@@ -228,19 +243,6 @@
     .btn-primary:hover {
         background-color: #004d80 !important;
         border-color: #004d80 !important;
-    }
-
-    /* Secondary button styling (Clear button) */
-    .btn-secondary {
-        background-color: var(--surface-disabled) !important;
-        border-color: var(--secondary-container) !important;
-        color: var(--on-surface-variant) !important;
-    }
-
-    .btn-secondary:hover {
-        background-color: var(--secondary-container) !important;
-        border-color: var(--secondary-container) !important;
-        color: var(--on-secondary) !important;
     }
 
     /* Radio buttons styling for BOTH themes */
@@ -270,6 +272,46 @@
     .form-check-input:checked {
         background-color: var(--primary) !important;
         border-color: var(--primary) !important;
+    }
+
+    /* Map KM indicators styling */
+    .leaflet-control-scale {
+        background-color: rgba(255, 255, 255, 0.8) !important;
+        border: 2px solid #777 !important;
+        border-radius: 4px !important;
+        color: #333 !important;
+        font-size: 11px !important;
+        line-height: 1.5 !important;
+        padding: 2px 5px !important;
+    }
+
+    .dark-theme .leaflet-control-scale,
+    [data-theme="dark"] .leaflet-control-scale {
+        background-color: rgba(255, 255, 255, 0.9) !important;
+        color: #333 !important;
+        border-color: #555 !important;
+    }
+
+    /* Leaflet control styling for better visibility in dark mode */
+    .leaflet-control-zoom a {
+        background-color: var(--surface-variant) !important;
+        color: var(--on-surface-variant) !important;
+        border-bottom-color: var(--secondary-container) !important;
+    }
+
+    .leaflet-control-zoom a:hover {
+        background-color: var(--secondary-container) !important;
+        color: var(--on-secondary) !important;
+    }
+
+    .leaflet-control-fullscreen a {
+        background-color: var(--surface-variant) !important;
+        color: var(--on-surface-variant) !important;
+    }
+
+    .leaflet-control-fullscreen a:hover {
+        background-color: var(--secondary-container) !important;
+        color: var(--on-secondary) !important;
     }
 
     /* Component styles */
