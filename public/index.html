@@ -461,6 +461,18 @@
     #route-map.leaflet-container {
         background: var(--surface) !important;
     }
+    #gadgetbridge-tip-settings,
+    #name-warning-tip {
+      position: relative;
+    }
+
+    #gadgetbridge-tip-settings .btn-close,
+    #name-warning-tip .btn-close {
+      position: absolute;
+      top: 0.25rem;
+      right: 0.25rem;
+      left: auto;
+    }
   </style>
 </head>
 
@@ -584,7 +596,7 @@
               <button class="btn btn-primary m-2" @click="onFitDownload">Export FIT file</button>
             </div>
             <!-- Gadgetbridge tip for Android app -->
-            <div id="gadgetbridge-tip-settings" style="display: none; margin-top: 1rem; position: relative;" class="alert alert-info py-2">
+            <div id="gadgetbridge-tip-settings" style="display: none; margin-top: 0.5rem; position: relative;" class="alert alert-info py-1">
               <button type="button" class="btn-close" style="font-size: 0.7rem; padding: 0.3rem;" aria-label="Close" onclick="dismissGadgetbridgeTip()"></button>
               <small class="text-muted">
                 Tip: use <a href="https://gadgetbridge.org/" target="_blank">Gadgetbridge</a> to send your FIT track to your Garmin device without Garmin Connect.
@@ -604,19 +616,30 @@
   <script type="text/x-template" id="route-info-template">
     <form novalidate>
       <div class="d-flex flex-column">
-        <div class="mb-3">
+        <div class="mb-2">
           <label class="form-label" for="routeName">Name</label>
-          <input id="routeName" type="text" v-model="routeName" @keydown.enter.prevent class="form-control text-primary" data-lpignore="true">
-          <i v-if="routeNameTooLong" class="fas fa-exclamation-triangle text-warning input-feedback" title="Name will be truncated on Garmin device" aria-hidden="true"></i>
+          <div class="position-relative">
+            <input id="routeName" type="text" v-model="routeName" @keydown.enter.prevent class="form-control text-primary" data-lpignore="true" style="padding-right: 30px;">
+            <i v-if="routeNameTooLong" class="fas fa-exclamation-triangle text-warning" 
+               title="Name will be truncated on Garmin device" 
+               aria-hidden="true"
+               style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer; z-index: 5;"
+               onclick="showNameWarning()"></i>
+          </div>
+          <!-- Name warning for Android app -->
+          <div id="name-warning-tip" style="display: none; margin-top: 0.25rem;" class="alert alert-warning py-1 mb-0">
+            <button type="button" class="btn-close" style="font-size: 0.7rem; padding: 0.3rem;" aria-label="Close" onclick="dismissNameWarning()"></button>
+            <small class="d-flex align-items-center">Name will be truncated on Garmin device</small>
+          </div>
         </div>
-        <div class="mb-3">
+        <div class="mb-2">
           <label class="form-label" for="distance">Distance</label>
           <div class="input-group">
             <input id="distance" type="text" v-model="distance" readonly class="form-control text-primary bg-light">
             <div class="input-group-text" style="min-width: 3rem;">{{ units }}</div>
           </div>
         </div>
-        <div class="row mb-3">
+        <div class="row mb-2">
           <div class="col-6">
             <label class="form-label" for="speed">Avg Speed</label>
             <div class="input-group">
@@ -638,12 +661,18 @@
   </script>
 
   <script>
+    // Check if we're in an Android app
+    function isAndroidApp() {
+      return (typeof Capacitor !== 'undefined' && Capacitor.getPlatform && Capacitor.getPlatform() === 'android') ||
+             (window.androidBridge || (/android/i.test(navigator.userAgent) && /capacitor/i.test(navigator.userAgent)));
+    }
+
     // Check if user has dismissed the Gadgetbridge tip
     function hasDismissedGadgetbridgeTip() {
       return localStorage.getItem('gadgetbridgeTipDismissed') === 'true';
     }
 
-    // Dismiss the tip and remember preference
+    // Dismiss the Gadgetbridge tip and remember preference
     function dismissGadgetbridgeTip() {
       const tipElement = document.getElementById('gadgetbridge-tip-settings');
       if (tipElement) {
@@ -652,35 +681,78 @@
       localStorage.setItem('gadgetbridgeTipDismissed', 'true');
     }
 
-    // Show Gadgetbridge tip only in Capacitor Android app and if not dismissed
+    // Check if user has seen the name warning before
+    function hasSeenNameWarning() {
+      return localStorage.getItem('nameWarningSeen') === 'true';
+    }
+
+    // Show name warning (first time automatically, then only when icon clicked)
+    function showNameWarning() {
+      const warningElement = document.getElementById('name-warning-tip');
+      if (warningElement) {
+        warningElement.style.display = 'block';
+      }
+    }
+
+    // Dismiss the name warning and remember preference
+    function dismissNameWarning() {
+      const warningElement = document.getElementById('name-warning-tip');
+      if (warningElement) {
+        warningElement.style.display = 'none';
+      }
+      localStorage.setItem('nameWarningSeen', 'true');
+    }
+
+    // Show name warning automatically first time it appears
+    function checkAndShowNameWarning() {
+      const warningElement = document.getElementById('name-warning-tip');
+      const warningIcon = document.querySelector('.fa-exclamation-triangle.text-warning');
+      
+      if (warningElement && warningIcon && isAndroidApp() && !hasSeenNameWarning()) {
+        // Wait a bit for Vue to update the DOM
+        setTimeout(() => {
+          if (warningIcon.isConnected) { // Check if icon is still in DOM (name still too long)
+            warningElement.style.display = 'block';
+          }
+        }, 100);
+      }
+    }
+
+    // Show Gadgetbridge tip only in Android app and if not dismissed
     function showGadgetbridgeTip() {
       const gadgetbridgeTipSettings = document.getElementById('gadgetbridge-tip-settings');
       
-      // Check if we're in a Capacitor Android environment and tip hasn't been dismissed
-      const isAndroidApp = (typeof Capacitor !== 'undefined' && Capacitor.getPlatform && Capacitor.getPlatform() === 'android') ||
-                          (window.androidBridge || (/android/i.test(navigator.userAgent) && /capacitor/i.test(navigator.userAgent)));
-      
-      if (isAndroidApp && gadgetbridgeTipSettings && !hasDismissedGadgetbridgeTip()) {
+      if (isAndroidApp() && gadgetbridgeTipSettings && !hasDismissedGadgetbridgeTip()) {
         gadgetbridgeTipSettings.style.display = 'block';
       } else if (gadgetbridgeTipSettings) {
         gadgetbridgeTipSettings.style.display = 'none';
       }
     }
 
-    // Try to show the tip when the page loads
-    document.addEventListener('DOMContentLoaded', showGadgetbridgeTip);
+    // Initialize all tips and warnings
+    function initializeTips() {
+      showGadgetbridgeTip();
+      checkAndShowNameWarning();
+    }
+
+    // Try to initialize when the page loads
+    document.addEventListener('DOMContentLoaded', initializeTips);
     
-    // Also try after a short delay in case Vue hasn't rendered yet
-    setTimeout(showGadgetbridgeTip, 500);
+    // Also try after delays in case Vue hasn't rendered yet
+    setTimeout(initializeTips, 500);
+    setTimeout(initializeTips, 1000);
     
-    // And try again after a longer delay to catch any dynamic rendering
-    setTimeout(showGadgetbridgeTip, 1000);
-    
-    // Set up a MutationObserver to watch for DOM changes
+    // Set up a MutationObserver to watch for DOM changes (for dynamic content)
     const observer = new MutationObserver(function(mutations) {
       mutations.forEach(function(mutation) {
         if (mutation.addedNodes && mutation.addedNodes.length > 0) {
-          showGadgetbridgeTip();
+          initializeTips();
+        }
+        // Also watch for attribute changes (like when name becomes too long)
+        if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+          if (mutation.target.classList.contains('fa-exclamation-triangle')) {
+            checkAndShowNameWarning();
+          }
         }
       });
     });
@@ -688,7 +760,9 @@
     // Start observing
     observer.observe(document.body, {
       childList: true,
-      subtree: true
+      subtree: true,
+      attributes: true,
+      attributeFilter: ['class']
     });
   </script>
 </body>
