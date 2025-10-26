@@ -1,12 +1,24 @@
-FIT Route Converter
-===================
+# GPX2FIT Converter
 
-This is a serverless solution to the problem of converting a GPX file for
-an event into a FIT file that can be used directly by a Garmin Edge cycle
-computer.
+Forked from [Nick Holloway / fit-route](https://gitlab.com/nwholloway/fit-route), this is an Android app that aims to solve the problem of converting a GPX file to a FIT file for Garmin devices like the Garmin fenix. Then it uses the Android Web Share API to share the FIT file to other apps like [Gadgetbridge](https://gadgetbridge.org/), to send it to a device, completely offline and without the invasive Garmin Connect, that requires internet to send local files to your watch via bluetooth.
 
-Development
------------
+It can also be run as a regular website, like the original project, and just let the user download the FIT file.
+
+## DISCLAIMER - Read before using, please
+
+This is a **personal project** to solve a problem: Garmin Connect requires internet service (?!?!) to sync GPX files stored locally in your Android phone to your Garmin fenix watch using bluetooth, which is a problem if you're in the middle of nowhere.
+
+I am doing this as a hobby, I have **absolutely zero experience** developing JavaScript or Android apps and this is literally the first time I'm doing it. I'm providing this with <ins>**ABSOLUTELY ZERO WARRANTY**</ins>, just in case anyone can benefit from it, just as I benefitted from the project I forked to achieve this app. Half of my modifications are vibe coded using AI, so know what you are facing.
+
+If there are any issues I could try to solve them whenever I have free time, but note that **I'm not doing this as a business or getting anything from it**.
+
+## Development
+
+First, download the dependencies for a 100% offline use of the Android app:
+
+```
+$ ./setup-offline.sh
+```
 
 Start a local server:
 
@@ -15,43 +27,28 @@ $ npm install
 $ npm start
 ```
 
-The application will be served up on <http://localhost:8080/>.
+The application will be served up on http://localhost:8080/. If you want it exposed in another IP or port, export the variables `C9_IP` or `C9_PORT`.
 
-Consistent code formatting is achieved using [Prettier](https://prettier.io/).
+To sync the app with the android project (created using Capacitor):
 
 ```console
-$ npm run format
+$ npx cap sync android
 ```
 
-BrowserStack
-------------
+Then you can open the `android` folder as a project in Android studio and do all the magic.
 
-To use _BrowserStack Live_ with _Local Testing_ launch the _BrowserStack Local_
-application as follows:
-```console
-$ BrowserStackLocal --key "$BROWSERSTACK_KEY" --folder "$PWD/public"
-```
+## Notes
 
-Notes
------
-
-This has been written using ES6 modules, and does not need a build step to
-transpile for execution.  All 3rd party libraries are loaded from their CDNs.
-
-All modern browsers work (Chrome, Firefox, Safari, Edge).  It would be possible
-to transpile & polyfill to support other browsers.
-
-Documentation of the FIT file format is contained in the FIT SDK
-([download](https://www.thisisant.com/resources/fit/)), and this implementation
+Documentation of the FIT file format is contained in the FIT SDK  
+([download](https://www.thisisant.com/resources/fit/)), and this implementation  
 does the bare minimum required.
 
-The mapping uses [CARTO](https://github.com/CartoDB/basemap-styles) raster tiles,
+The mapping uses [CARTO](https://github.com/CartoDB/basemap-styles) raster tiles,  
 which are free for up to 75,000 mapviews per month for non-commercial use.
 
-Third Party Libraries
----------------------
+## Third Party Libraries
 
-* [Vue.js](https://vuejs.org/)
-* [Bootstrap](https://getbootstrap.com/)
-* [Leaflet](https://leafletjs.com/)
-* [Font Awesome](https://fontawesome.com/)
+- [Vue.js](https://vuejs.org/)
+- [Bootstrap](https://getbootstrap.com/)
+- [Leaflet](https://leafletjs.com/)
+- [Font Awesome](https://fontawesome.com/)
