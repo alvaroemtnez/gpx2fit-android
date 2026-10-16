@@ -267,7 +267,7 @@ route-map,
 /* Leaflet's layers and fullscreen icons are black images: invert them in dark mode, starting from the
    inverse surface color so the background ends up dark (hue-rotate keeps the scheme's tint) */
 body.dark .leaflet-control-layers-toggle,
-body.dark .fullscreen-icon {
+body.dark .leaflet-fullscreen-icon {
   background-color: var(--inverse-surface) !important;
   filter: invert(1) hue-rotate(180deg);
 }

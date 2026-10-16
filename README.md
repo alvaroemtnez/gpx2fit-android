@@ -72,7 +72,7 @@ If you prefer it anyway, run `./build.sh` once (it also syncs the web app into t
 ## Notes
 
 Documentation of the FIT file format is contained in the FIT SDK  
-([download](https://www.thisisant.com/resources/fit/)), and this implementation  
+([download](https://developer.garmin.com/fit/get-the-sdk/)), and this implementation  
 does the bare minimum required.
 
 The mapping uses [CARTO](https://github.com/CartoDB/basemap-styles) raster tiles, which require an [API key](https://carto.com/basemaps/apikey)  

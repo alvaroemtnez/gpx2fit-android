@@ -116,6 +116,9 @@ function* setDistance(points) {
 
   for (const point of points) {
     if (prevPoint) {
+      if (prevPoint.lat === point.lat && prevPoint.lon === point.lon) {
+        continue;
+      }
       distance += haversine(prevPoint, point);
     }
     yield { ...point, distance };

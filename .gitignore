@@ -17,7 +17,6 @@ public/css/images/layers.png
 public/css/images/marker-icon-2x.png
 public/css/images/marker-icon.png
 public/css/images/marker-shadow.png
-public/css/icon-fullscreen.svg
 public/js/lib/
 
 # Local configuration with the CARTO API key (see public/js/config.example.js)
