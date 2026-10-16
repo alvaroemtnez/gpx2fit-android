@@ -24,3 +24,7 @@ public/css/icon-fullscreen.svg
 # Temporary files
 fontawesome.zip
 *.tmp
+
+# Build output and downloaded toolchain (build.sh)
+dist/
+.tools/
