@@ -37,9 +37,18 @@ curl -L https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css 
 echo "Downloading Font Awesome..."
 curl -L https://use.fontawesome.com/releases/v7.1.0/fontawesome-free-7.1.0-web.zip -o fontawesome.zip
 unzip -q fontawesome.zip
+rm -rf public/css/fontawesome public/css/webfonts
 mv fontawesome-free-7.1.0-web/css public/css/fontawesome
 mv fontawesome-free-7.1.0-web/webfonts public/css/webfonts
 rm -rf fontawesome-free-7.1.0-web fontawesome.zip
+
+# Download Material Color Utilities (generates the Material 3 color scheme)
+echo "Downloading Material Color Utilities..."
+rm -rf public/js/lib/material-color-utilities
+mkdir -p public/js/lib/material-color-utilities
+curl -L https://registry.npmjs.org/@material/material-color-utilities/-/material-color-utilities-0.3.0.tgz \
+  | tar -xz -C public/js/lib/material-color-utilities --strip-components=1 \
+      --exclude='*.ts' --exclude='*.map' --exclude='*.test.js' --exclude='*.md' --exclude='package.json'
 
 echo "All dependencies downloaded successfully!"
 echo "Project structure:"

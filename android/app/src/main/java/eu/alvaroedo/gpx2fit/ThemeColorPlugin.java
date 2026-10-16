@@ -8,70 +8,47 @@ import com.getcapacitor.annotation.CapacitorPlugin;
 
 import android.content.Context;
 import android.content.res.Configuration;
-import android.content.res.Resources;
-import android.util.Log;
+import android.os.Build;
 
+/**
+ * Gives the web app the system theme: whether dark mode is on and, on Android 12+, the
+ * dynamic color ("Material You") seed. The web app generates the full Material 3 color
+ * scheme from that seed (see public/js/material-theme.js).
+ */
 @CapacitorPlugin(name = "ThemeColor")
 public class ThemeColorPlugin extends Plugin {
 
-    private static final String TAG = "ThemeColorPlugin";
+    private static final String EVENT = "themeChanged";
 
     @PluginMethod
-    public void getMaterialColors(PluginCall call) {
-        try {
-            JSObject colors = new JSObject();
-            Context context = getContext();
-            
-            boolean isDark = isDarkModeEnabled(context);
-            
-            // Use simple light/dark color scheme without Material 3
-            if (isDark) {
-                // Dark theme colors
-                colors.put("primary", "#A0C9FF");
-                colors.put("primaryContainer", "#00497D");
-                colors.put("onPrimary", "#003258");
-                colors.put("secondary", "#BCC7DB");
-                colors.put("secondaryContainer", "#3C4758");
-                colors.put("onSecondary", "#263141");
-                colors.put("surface", "#1B1B1F");
-                colors.put("onSurface", "#E4E2E6");
-                colors.put("surfaceVariant", "#43474E");
-                colors.put("onSurfaceVariant", "#C3C6CF");
-                colors.put("background", "#1B1B1F");
-                colors.put("error", "#FFB4AB");
-                colors.put("onError", "#690005");
-            } else {
-                // Light theme colors
-                colors.put("primary", "#0061A8");
-                colors.put("primaryContainer", "#D2E4FF");
-                colors.put("onPrimary", "#FFFFFF");
-                colors.put("secondary", "#545F70");
-                colors.put("secondaryContainer", "#D8E3F8");
-                colors.put("onSecondary", "#FFFFFF");
-                colors.put("surface", "#FEFBFF");
-                colors.put("onSurface", "#1B1B1F");
-                colors.put("surfaceVariant", "#DFE2EB");
-                colors.put("onSurfaceVariant", "#43474E");
-                colors.put("background", "#FEFBFF");
-                colors.put("error", "#BA1A1A");
-                colors.put("onError", "#FFFFFF");
-            }
-            
-            colors.put("isDark", isDark);
-            colors.put("isMaterial", false);
-            colors.put("isDynamic", false);
-
-            call.resolve(colors);
-
-        } catch (Exception e) {
-            Log.e(TAG, "Failed to get theme colors", e);
-            call.reject("Failed to get theme colors: " + e.getMessage());
-        }
+    public void getTheme(PluginCall call) {
+        call.resolve(getTheme(getContext().getResources().getConfiguration()));
     }
 
-    private boolean isDarkModeEnabled(Context context) {
-        int nightModeFlags = context.getResources().getConfiguration().uiMode &
-                Configuration.UI_MODE_NIGHT_MASK;
-        return nightModeFlags == Configuration.UI_MODE_NIGHT_YES;
+    // uiMode is in the activity's configChanges, so dark mode changes arrive here instead of recreating it.
+    @Override
+    protected void handleOnConfigurationChanged(Configuration newConfig) {
+        super.handleOnConfigurationChanged(newConfig);
+        notifyListeners(EVENT, getTheme(newConfig));
+    }
+
+    private JSObject getTheme(Configuration configuration) {
+        JSObject theme = new JSObject();
+        theme.put("isDark", (configuration.uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES);
+        String seedColor = getSeedColor(getContext());
+        theme.put("isDynamic", seedColor != null);
+        if (seedColor != null) {
+            theme.put("seedColor", seedColor);
+        }
+        return theme;
+    }
+
+    // The system's primary accent color, derived from the wallpaper or the color picked in the system settings.
+    private String getSeedColor(Context context) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
+            return null;
+        }
+        int color = context.getColor(android.R.color.system_accent1_500);
+        return String.format("#%06X", color & 0xFFFFFF);
     }
 }

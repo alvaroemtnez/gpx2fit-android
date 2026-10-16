@@ -2,6 +2,7 @@
 
 import ErrorMessage from './components/error-message.js';
 import FitRoute from './components/fit-route.js';
+import { statusBarColor, themeReady } from './material-theme.js';
 
 function onShowInfo(value) {
   this.showInfo = value;
@@ -52,9 +53,10 @@ const app = createApp({
             style: 'DARK' 
           });
           
-          // Optional: Sync with your config color
-          await StatusBar.setBackgroundColor({ color: '#0061a8' });
-          await EdgeToEdge.setBackgroundColor({ color: '#0061a8' });
+          // Use the theme's color (the system's dynamic color on Android 12+)
+          await themeReady;
+          await StatusBar.setBackgroundColor({ color: statusBarColor() });
+          await EdgeToEdge.setBackgroundColor({ color: statusBarColor() });
           
         } catch (error) {
           console.error('Error ensuring dark taskbar:', error);

@@ -113,7 +113,7 @@ setup() {
 
 # Download the web libraries (Vue, Leaflet...) served from the app itself, so it works offline.
 web_deps() {
-    if [ ! -f "$ROOT/public/js/vue.global.prod.js" ]; then
+    if [ ! -f "$ROOT/public/js/vue.global.prod.js" ] || [ ! -f "$ROOT/public/js/lib/material-color-utilities/index.js" ]; then
         info "Downloading offline web dependencies"
         (cd "$ROOT" && ./setup-offline.sh)
     fi

@@ -20,6 +20,8 @@
   <link rel="stylesheet" href="css/fit-route.css" />
 
   <style>
+    /* Fallback colors until js/material-theme.js generates the Material 3 scheme
+       (from the system's dynamic color on Android 12+), which overrides these. */
     :root {
         color-scheme: light dark;
         
@@ -80,55 +82,6 @@
         }
     }
 
-    /* Explicit dark theme class (for JavaScript control) */
-    .dark-theme, [data-theme="dark"] {
-        --primary: #0061a8;
-        --primary-container: #00497d;
-        --on-primary: #ffffff;
-        --secondary: #6c757d; /* Keep consistent gray */
-        --secondary-container: #3c4758;
-        --on-secondary: #ffffff;
-        --surface: #1b1b1f;
-        --on-surface: #e4e2e6;
-        --surface-variant: #2d3038;
-        --on-surface-variant: #c3c6cf;
-        --surface-disabled: #1b1b1f;
-        --background: #1b1b1f;
-        --error: #ffb4ab;
-        --on-error: #690005;
-        
-        --bs-primary: #0061a8;
-        --bs-secondary: #6c757d; /* Keep consistent gray */
-        --bs-body-bg: #1b1b1f;
-        --bs-body-color: #e4e2e6;
-        --bs-light: #1b1b1f;
-        --bs-dark: #f8f9fa;
-    }
-
-    /* Explicit light theme class (for JavaScript control) */
-    .light-theme, [data-theme="light"] {
-        --primary: #0061a8;
-        --primary-container: #d2e4ff;
-        --on-primary: #ffffff;
-        --secondary: #545f70;
-        --secondary-container: #d8e3f8;
-        --on-secondary: #ffffff;
-        --surface: #fefbff;
-        --on-surface: #1b1b1f;
-        --surface-variant: #f8f9fa; /* Lighter gray for enabled inputs */
-        --on-surface-variant: #43474e;
-        --surface-disabled: #e9ecef; /* Darker gray for disabled inputs - matches clear button */
-        --background: #fefbff;
-        --error: #ba1a1a;
-        --on-error: #ffffff;
-        
-        --bs-primary: #0061a8;
-        --bs-secondary: #6c757d;
-        --bs-body-bg: #fefbff;
-        --bs-body-color: #1b1b1f;
-        --bs-light: #fefbff; /* Match the file selection screen background */
-    }
-
     /* Common styles that apply to all themes */
     html, body {
         height: 100dvh;
@@ -157,7 +110,7 @@
         background-color: var(--surface-variant) !important;
         color: var(--on-surface-variant) !important;
         border-color: var(--primary) !important;
-        box-shadow: 0 0 0 0.2rem rgba(0, 97, 168, 0.25) !important;
+        box-shadow: 0 0 0 0.2rem color-mix(in srgb, var(--primary) 25%, transparent) !important;
     }
 
     /* Disabled inputs and unit labels - darker gray */
@@ -241,8 +194,8 @@
     }
 
     .btn-primary:hover {
-        background-color: #004d80 !important;
-        border-color: #004d80 !important;
+        background-color: color-mix(in srgb, var(--primary), var(--on-primary) 8%) !important;
+        border-color: color-mix(in srgb, var(--primary), var(--on-primary) 8%) !important;
     }
 
     /* Radio buttons styling for BOTH themes */
@@ -265,7 +218,7 @@
     }
     
     .file-btn:hover {
-        background-color: #004d80 !important;
+        background-color: color-mix(in srgb, var(--primary), var(--on-primary) 8%) !important;
     }
 
     /* Form switches styling */
@@ -389,10 +342,10 @@
         z-index: 1055;
         min-width: 300px;
         max-width: 90%;
-        background: #dc3545;
-        color: white;
+        background: var(--error);
+        color: var(--on-error);
         border-radius: 12px;
-        box-shadow: 0 8px 25px rgba(220, 53, 69, 0.3);
+        box-shadow: 0 8px 25px color-mix(in srgb, var(--error) 30%, transparent);
         padding: 16px 20px;
         animation: slideUp 0.3s ease-out;
     }
@@ -499,7 +452,6 @@
   <script src="js/config.js"></script>
 
   <!-- Local offline JavaScript files -->
-  <script src="js/theme-detector.js"></script>
   <script src="js/vue.global.prod.js"></script>
   <script src="js/leaflet.js"></script>
   <script src="js/leaflet-fullscreen.js"></script>
