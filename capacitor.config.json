@@ -1,5 +1,5 @@
 {
-  "appId": "eu.alvaroedo.gpx2fit",
+  "appId": "io.alvaroedo.gpx2fit",
   "appName": "GPX2FIT Converter",
   "webDir": "public",
   "StatusBar": {

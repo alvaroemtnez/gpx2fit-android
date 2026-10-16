@@ -1,10 +1,10 @@
 apply plugin: 'com.android.application'
 
 android {
-    namespace "eu.alvaroedo.gpx2fit"
+    namespace "io.alvaroedo.gpx2fit"
     compileSdk rootProject.ext.compileSdkVersion
     defaultConfig {
-        applicationId "eu.alvaroedo.gpx2fit"
+        applicationId "io.alvaroedo.gpx2fit"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

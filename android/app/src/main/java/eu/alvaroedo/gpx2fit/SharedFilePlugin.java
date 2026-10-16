@@ -1,4 +1,4 @@
-package eu.alvaroedo.gpx2fit;
+package io.alvaroedo.gpx2fit;
 
 import com.getcapacitor.JSObject;
 import com.getcapacitor.Plugin;

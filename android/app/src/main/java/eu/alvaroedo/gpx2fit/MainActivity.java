@@ -1,4 +1,4 @@
-package eu.alvaroedo.gpx2fit;
+package io.alvaroedo.gpx2fit;
 
 import android.os.Build;
 import android.view.View;
