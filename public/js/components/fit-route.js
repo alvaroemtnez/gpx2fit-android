@@ -53,6 +53,25 @@ async function onSharedFile({ name, data, error }) {
   await this.onFileUpload(new File([blob], name, { type: 'application/gpx+xml' }));
 }
 
+function dismissGadgetbridgeTip() {
+  this.showGadgetbridgeTip = false;
+  try {
+    localStorage.setItem('gadgetbridgeTipDismissed', 'true');
+  } catch {
+    // Storage not available, the tip will show again next time
+  }
+}
+
+function gadgetbridgeTipDismissed() {
+  try {
+    return localStorage.getItem('gadgetbridgeTipDismissed') === 'true';
+  } catch {
+    return false;
+  }
+}
+
+const isNativePlatform = () => window.Capacitor?.isNativePlatform?.() ?? false;
+
 async function onFitDownload() {
   const optionalTime = (value) => (this.includeTiming ? value : undefined);
 
@@ -125,7 +144,7 @@ async function onFitDownload() {
     const fileName = `${this.route.name}.fit`;
 
     // --- Native (Capacitor) share ---
-    if (window.Capacitor?.isNativePlatform?.()) {
+    if (this.isNative) {
       const { Filesystem, Share } = window.Capacitor.Plugins;
 
       // Convert blob to base64 using FileReader
@@ -189,7 +208,10 @@ const FitRoute = {
     route: null,
     units: 'km',
     includeTiming: true,
-    includeTurns: true
+    includeTurns: true,
+    isNative: isNativePlatform(),
+    // Only shown in the Android app, until dismissed
+    showGadgetbridgeTip: isNativePlatform() && !gadgetbridgeTipDismissed()
   }),
   methods: {
     onClear,
@@ -197,6 +219,7 @@ const FitRoute = {
     onError,
     onFitDownload,
     onSharedFile,
+    dismissGadgetbridgeTip,
     setName,
     setDuration
   },
@@ -206,7 +229,7 @@ const FitRoute = {
     RouteMap
   },
   async mounted() {
-    const SharedFile = window.Capacitor?.isNativePlatform?.() && window.Capacitor.Plugins.SharedFile;
+    const SharedFile = this.isNative && window.Capacitor.Plugins.SharedFile;
     if (SharedFile) {
       this.sharedFileListener = await SharedFile.addListener('fileReceived', this.onSharedFile);
     }

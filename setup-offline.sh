@@ -29,18 +29,17 @@ curl -L https://unpkg.com/leaflet@1.9.1/dist/images/marker-shadow.png -o public/
 curl -L https://unpkg.com/leaflet.fullscreen@2.4.0/icon-fullscreen.svg -o public/css/icon-fullscreen.svg
 
 
-# Download Bootstrap
-echo "Downloading Bootstrap..."
-curl -L https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css -o public/css/bootstrap.min.css
-
-# Download Font Awesome
-echo "Downloading Font Awesome..."
-curl -L https://use.fontawesome.com/releases/v7.1.0/fontawesome-free-7.1.0-web.zip -o fontawesome.zip
-unzip -q fontawesome.zip
-rm -rf public/css/fontawesome public/css/webfonts
-mv fontawesome-free-7.1.0-web/css public/css/fontawesome
-mv fontawesome-free-7.1.0-web/webfonts public/css/webfonts
-rm -rf fontawesome-free-7.1.0-web fontawesome.zip
+# Download BeerCSS (Material Design 3 components) and the Material Symbols icon font
+echo "Downloading BeerCSS..."
+rm -rf public/css/beercss beercss.tmp
+mkdir -p public/css/beercss beercss.tmp
+curl -L https://registry.npmjs.org/beercss/-/beercss-5.0.3.tgz | tar -xz -C beercss.tmp --strip-components=1
+cp beercss.tmp/dist/cdn/beer.min.css \
+   beercss.tmp/dist/cdn/material-symbols-outlined.woff2 \
+   beercss.tmp/dist/cdn/material-symbols-subset.woff2 \
+   beercss.tmp/LICENSE \
+   public/css/beercss/
+rm -rf beercss.tmp
 
 # Download Material Color Utilities (generates the Material 3 color scheme)
 echo "Downloading Material Color Utilities..."

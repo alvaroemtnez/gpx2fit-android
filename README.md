@@ -81,7 +81,6 @@ The mapping uses [CARTO](https://github.com/CartoDB/basemap-styles) raster tiles
 ## Third Party Libraries
 
 - [Vue.js](https://vuejs.org/)
-- [Bootstrap](https://getbootstrap.com/)
+- [BeerCSS](https://www.beercss.com/) (Material Design 3 components) and [Material Symbols](https://fonts.google.com/icons)
 - [Leaflet](https://leafletjs.com/)
-- [Font Awesome](https://fontawesome.com/)
 - [Material Color Utilities](https://github.com/material-foundation/material-color-utilities)

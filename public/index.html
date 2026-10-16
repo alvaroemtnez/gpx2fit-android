@@ -13,439 +13,24 @@
   <link rel="icon" href="images/logo-228.png" sizes="228x228" />
 
   <!-- Local offline CSS files -->
-  <link rel="stylesheet" href="css/bootstrap.min.css" />
+  <link rel="stylesheet" href="css/beercss/beer.min.css" />
   <link rel="stylesheet" href="css/leaflet.css" />
   <link rel="stylesheet" href="css/leaflet-fullscreen.css" />
-  <link rel="stylesheet" href="css/fontawesome/all.min.css" />
   <link rel="stylesheet" href="css/fit-route.css" />
-
-  <style>
-    /* Fallback colors until js/material-theme.js generates the Material 3 scheme
-       (from the system's dynamic color on Android 12+), which overrides these. */
-    :root {
-        color-scheme: light dark;
-        
-        /* Default light theme variables */
-        --primary: #0061a8;
-        --primary-container: #d2e4ff;
-        --on-primary: #ffffff;
-        --secondary: #6c757d; /* Changed to match Bootstrap's secondary color */
-        --secondary-container: #d8e3f8;
-        --on-secondary: #ffffff;
-        --surface: #fefbff;
-        --on-surface: #1b1b1f;
-        --surface-variant: #f8f9fa;
-        --on-surface-variant: #43474e;
-        --surface-disabled: #e9ecef;
-        --background: #fefbff;
-        --error: #ba1a1a;
-        --on-error: #ffffff;
-        
-        /* Bootstrap overrides for light theme */
-        --bs-primary: #0061a8;
-        --bs-secondary: #6c757d; /* This is Bootstrap's default gray */
-        --bs-success: #198754;
-        --bs-info: #0dcaf0;
-        --bs-warning: #ffc107;
-        --bs-danger: #dc3545;
-        --bs-light: #f8f9fa;
-        --bs-dark: #212529;
-        --bs-body-bg: #fefbff;
-        --bs-body-color: #1b1b1f;
-    }
-
-    /* System dark theme (for browsers) */
-    @media (prefers-color-scheme: dark) {
-        :root:not([data-theme]) {
-            --primary: #0061a8;
-            --primary-container: #00497d;
-            --on-primary: #ffffff;
-            --secondary: #6c757d; /* Keep consistent gray */
-            --secondary-container: #3c4758;
-            --on-secondary: #ffffff;
-            --surface: #1b1b1f;
-            --on-surface: #e4e2e6;
-            --surface-variant: #2d3038;
-            --on-surface-variant: #c3c6cf;
-            --surface-disabled: #1b1b1f;
-            --background: #1b1b1f;
-            --error: #ffb4ab;
-            --on-error: #690005;
-            
-            /* Bootstrap overrides for dark theme */
-            --bs-primary: #0061a8;
-            --bs-secondary: #6c757d; /* Keep consistent gray */
-            --bs-body-bg: #1b1b1f;
-            --bs-body-color: #e4e2e6;
-            --bs-light: #1b1b1f;
-            --bs-dark: #f8f9fa;
-        }
-    }
-
-    /* Common styles that apply to all themes */
-    html, body {
-        height: 100dvh;
-        margin: 0;
-        overflow: hidden;
-        background: var(--background);
-        color: var(--on-surface);
-        transition: background-color 0.3s ease, color 0.3s ease;
-    }
-    
-    #main {
-        display: flex;
-        flex-direction: column;
-        height: 100dvh;
-        background: var(--background);
-    }
-
-    /* Text input styling for BOTH themes */
-    .form-control {
-        background-color: var(--surface-variant) !important;
-        color: var(--on-surface-variant) !important;
-        border-color: var(--secondary-container) !important;
-    }
-
-    .form-control:focus {
-        background-color: var(--surface-variant) !important;
-        color: var(--on-surface-variant) !important;
-        border-color: var(--primary) !important;
-        box-shadow: 0 0 0 0.2rem color-mix(in srgb, var(--primary) 25%, transparent) !important;
-    }
-
-    /* Disabled inputs and unit labels - darker gray */
-    .form-control:disabled,
-    .form-control.bg-light {
-        background-color: var(--surface-disabled) !important;
-        color: var(--on-surface-variant) !important;
-        border-color: var(--secondary-container) !important;
-    }
-
-    /* Unit labels should match the background in dark mode */
-    .input-group-text {
-        background-color: var(--surface-disabled) !important;
-        color: var(--on-surface-variant) !important;
-        border-color: var(--secondary-container) !important;
-    }
-
-    /* Dark theme specific overrides for disabled fields */
-    .dark-theme .form-control:disabled,
-    .dark-theme .form-control.bg-light,
-    [data-theme="dark"] .form-control:disabled,
-    [data-theme="dark"] .form-control.bg-light {
-        background-color: var(--background) !important;
-        color: var(--on-surface-variant) !important;
-    }
-
-    /* Input group styling */
-    .input-group .form-control:not(:first-child) {
-        border-left: 0;
-    }
-
-    .input-group .input-group-text {
-        border-left: 0;
-    }
-
-    /* Fix blue text color in dark mode - use same color as labels */
-    .text-primary {
-        color: var(--on-surface-variant) !important;
-    }
-
-    /* Dark theme specific overrides */
-    .dark-theme .bg-light,
-    [data-theme="dark"] .bg-light {
-        background-color: var(--surface-variant) !important;
-        color: var(--on-surface-variant);
-    }
-
-    .dark-theme .btn-outline-secondary,
-    [data-theme="dark"] .btn-outline-secondary {
-        color: var(--secondary);
-        border-color: var(--secondary);
-    }
-    
-    .dark-theme .btn-outline-secondary:hover,
-    .dark-theme .btn-outline-secondary.active,
-    [data-theme="dark"] .btn-outline-secondary:hover,
-    [data-theme="dark"] .btn-outline-secondary.active {
-        background-color: var(--secondary);
-        color: var(--on-secondary);
-        border-color: var(--secondary);
-    }
-    
-    .dark-theme .bg-primary,
-    [data-theme="dark"] .bg-primary {
-        background-color: var(--primary) !important;
-        color: var(--on-primary) !important;
-    }
-
-    /* Fix for the settings panel in BOTH themes */
-    .bg-light.p-3 {
-        background-color: var(--background) !important;
-        color: var(--on-surface);
-        border-bottom: 1px solid var(--secondary-container);
-    }
-
-    /* Ensure ALL buttons have consistent blue color in both themes */
-    .btn-primary {
-        background-color: var(--primary) !important;
-        border-color: var(--primary) !important;
-        color: var(--on-primary) !important;
-    }
-
-    .btn-primary:hover {
-        background-color: color-mix(in srgb, var(--primary), var(--on-primary) 8%) !important;
-        border-color: color-mix(in srgb, var(--primary), var(--on-primary) 8%) !important;
-    }
-
-    /* Radio buttons styling for BOTH themes */
-    .btn-check:checked + .btn-outline-secondary {
-        background-color: var(--primary) !important;
-        border-color: var(--primary) !important;
-        color: var(--on-primary) !important;
-    }
-
-    /* File button styling - ensure consistent blue */
-    .file-btn {
-        font-size: 1.2rem;
-        padding: 1rem 2rem;
-        background-color: var(--primary) !important;
-        color: var(--on-primary) !important;
-        border: none;
-        border-radius: 0.5rem;
-        cursor: pointer;
-        transition: background-color 0.2s ease;
-    }
-    
-    .file-btn:hover {
-        background-color: color-mix(in srgb, var(--primary), var(--on-primary) 8%) !important;
-    }
-
-    /* Form switches styling */
-    .form-check-input:checked {
-        background-color: var(--primary) !important;
-        border-color: var(--primary) !important;
-    }
-
-    /* Map KM indicators styling */
-    .leaflet-control-scale {
-        background-color: rgba(255, 255, 255, 0.8) !important;
-        border: 2px solid #777 !important;
-        border-radius: 4px !important;
-        color: #333 !important;
-        font-size: 11px !important;
-        line-height: 1.5 !important;
-        padding: 2px 5px !important;
-    }
-
-    .dark-theme .leaflet-control-scale,
-    [data-theme="dark"] .leaflet-control-scale {
-        background-color: rgba(255, 255, 255, 0.9) !important;
-        color: #333 !important;
-        border-color: #555 !important;
-    }
-
-    /* Leaflet control styling for better visibility in dark mode */
-    .leaflet-control-zoom a {
-        background-color: var(--surface-variant) !important;
-        color: var(--on-surface-variant) !important;
-        border-bottom-color: var(--secondary-container) !important;
-    }
-
-    .leaflet-control-zoom a:hover {
-        background-color: var(--secondary-container) !important;
-        color: var(--on-secondary) !important;
-    }
-
-    .leaflet-control-fullscreen a {
-        background-color: var(--surface-variant) !important;
-        color: var(--on-surface-variant) !important;
-    }
-
-    .leaflet-control-fullscreen a:hover {
-        background-color: var(--secondary-container) !important;
-        color: var(--on-secondary) !important;
-    }
-
-    /* Component styles */
-    fit-route {
-        display: flex;
-        flex-direction: column;
-        flex: 1 1 auto;
-        min-height: 0;
-    }
-    
-    fit-route > div {
-        display: flex;
-        flex-direction: column;
-        flex: 1 1 auto;
-        min-height: 0;
-        background: var(--background);
-    }
-    
-    #route-map {
-        flex: 1 1 auto;
-        min-height: 0;
-        background: var(--surface);
-    }
-    
-    body {
-        font-family: 'Roboto', sans-serif;
-        margin: 0;
-        display: flex;
-        flex-direction: column;
-        min-height: 100dvh;
-        align-items: center;
-        justify-content: space-between;
-    }
-    .top-card {
-        text-align: center;
-        margin-top: 2rem;
-    }
-    .top-card img {
-        width: 128px;
-        height: 128px;
-        border-radius: 50%;
-        margin-top: 2rem;
-        margin-bottom: 1rem;
-    }
-    .top-card h1 {
-        margin-top: 0.5rem;
-        font-size: 2rem;
-        font-weight: 500;
-    }
-    .middle-card {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        margin: 3rem 0;
-    }
-    .bottom-note {
-        font-size: 0.8rem;
-        margin-bottom: 1rem;
-        text-align: center;
-    }
-    .bottom-note a { 
-        color: var(--primary); 
-        text-decoration: none; 
-    }
-    .bottom-note a:hover { 
-        text-decoration: underline; 
-    }
-    
-    /* Beautiful toast-style error */
-    .error-toast {
-        position: fixed;
-        bottom: 20px;
-        left: 50%;
-        transform: translateX(-50%);
-        z-index: 1055;
-        min-width: 300px;
-        max-width: 90%;
-        background: var(--error);
-        color: var(--on-error);
-        border-radius: 12px;
-        box-shadow: 0 8px 25px color-mix(in srgb, var(--error) 30%, transparent);
-        padding: 16px 20px;
-        animation: slideUp 0.3s ease-out;
-    }
-    
-    .error-toast.success {
-        background: #198754;
-        box-shadow: 0 8px 25px rgba(25, 135, 84, 0.3);
-    }
-    
-    .error-toast.warning {
-        background: #ffc107;
-        color: #000;
-        box-shadow: 0 8px 25px rgba(255, 193, 7, 0.3);
-    }
-    
-    @keyframes slideUp {
-        from {
-            opacity: 0;
-            transform: translateX(-50%) translateY(20px);
-        }
-        to {
-            opacity: 1;
-            transform: translateX(-50%) translateY(0);
-        }
-    }
-    
-    .error-content {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 12px;
-    }
-    
-    .error-message {
-        flex: 1;
-        font-weight: 500;
-        line-height: 1.4;
-    }
-    
-    .error-close {
-        background: none;
-        border: none;
-        color: inherit;
-        opacity: 0.8;
-        cursor: pointer;
-        padding: 4px;
-        border-radius: 4px;
-        transition: opacity 0.2s;
-    }
-    
-    .error-close:hover {
-        opacity: 1;
-        background: rgba(255, 255, 255, 0.2);
-    }
-    
-    /* Ensure all Vue components inherit theme colors */
-    fit-route,
-    file-upload,
-    route-info,
-    route-map {
-        background: var(--background);
-        color: var(--on-surface);
-    }
-
-    /* Ensure the map container respects theme */
-    #route-map.leaflet-container {
-        background: var(--surface) !important;
-    }
-    #gadgetbridge-tip-settings,
-    #name-warning-tip {
-      position: relative;
-    }
-
-    #gadgetbridge-tip-settings .btn-close,
-    #name-warning-tip .btn-close {
-      position: absolute;
-      top: 0.25rem;
-      right: 0.25rem;
-      left: auto;
-    }
-  </style>
 </head>
 
-<body>
-  <main id="main" class="flex-grow-1 d-flex flex-column w-100 h-100">
-
-    <!-- Beautiful toast-style error -->
-    <div v-if="error" class="error-toast">
-      <div class="error-content">
-        <div class="error-message">
-          <i class="fas fa-exclamation-circle me-2"></i>
-          {{ error }}
-        </div>
-        <button class="error-close" @click="error = null">
-          <i class="fas fa-times"></i>
-        </button>
-      </div>
+<!-- Colors come from js/material-theme.js (Material 3 scheme, from the system's dynamic color on Android 12+) -->
+<body class="light">
+  <main id="main">
+    <div v-if="error" class="snackbar error active">
+      <i>error</i>
+      <div class="max">{{ error }}</div>
+      <button class="transparent circle small" aria-label="Close" @click="error = null">
+        <i>close</i>
+      </button>
     </div>
 
-    <fit-route @show-info="onShowInfo" @error="onError" class="flex-grow-1"></fit-route>
+    <fit-route @show-info="onShowInfo" @error="onError"></fit-route>
   </main>
 
   <!-- Local configuration (not committed, see js/config.example.js) -->
@@ -467,258 +52,127 @@
   <script type="text/x-template" id="empty-template"></script>
 
   <script type="text/x-template" id="file-upload-template">
-    <form enctype="multipart/form-data" novalidate class="h-100 w-100">
-      <div class="d-flex flex-column justify-content-between align-items-center w-100 h-100 position-relative">
-
-        <!-- Top section - title/icon -->
-        <div class="top-card">
-          <img src="images/logo-196.png" alt="App Icon">
-          <h1>GPX2FIT Converter</h1>
-        </div>
-
-        <!-- Middle section - button -->
-        <div class="d-flex justify-content-center align-items-center flex-grow-1">
-          <!-- Hidden file input -->
-          <input
-            v-if="!file"
-            type="file"
-            title=" "
-            aria-label="Select GPX"
-            accept=".gpx,application/gpx+xml,application/octet-stream"
-            style="display:none"
-            ref="fileInput"
-            @change="onFileSelect"
-          >
-
-          <!-- Simple blue button -->
-          <button v-if="!file" type="button" class="file-btn" @click="$refs.fileInput.click()">
-            Select GPX file to start...
-          </button>
-        </div>
-
-        <!-- Bottom section - source code note -->
-        <div class="bottom-note">
-          <a href="https://gitlab.com/alvaroemtnez/gpx2fit-android" target="_blank">Source code</a>. 
-          Based in <a href="https://gitlab.com/nwholloway/fit-route" target="_blank">fit-route by Nick Holloway</a>.
-        </div>
+    <div class="start-screen">
+      <div class="start-header">
+        <img src="images/logo-196.png" alt="">
+        <h1>GPX2FIT Converter</h1>
+        <p>Convert GPX routes into FIT courses for your Garmin device</p>
       </div>
-    </form>
+
+      <input
+        type="file"
+        aria-label="Select GPX"
+        accept=".gpx,application/gpx+xml,application/octet-stream"
+        hidden
+        ref="fileInput"
+        @change="onFileSelect"
+      >
+      <button type="button" class="extra" @click="$refs.fileInput.click()">
+        <i>upload_file</i>
+        <span>Select GPX file</span>
+      </button>
+
+      <p class="start-footer">
+        <a href="https://gitlab.com/alvaroemtnez/gpx2fit-android" target="_blank">Source code</a>.
+        Based on <a href="https://gitlab.com/nwholloway/fit-route" target="_blank">fit-route by Nick Holloway</a>.
+      </p>
+    </div>
   </script>
 
   <script type="text/x-template" id="fit-route-template">
-    <div class="d-flex flex-column w-100 h-100">
-      <template v-if="!gpxFile">
-        <file-upload @submit="onFileUpload" @error="onError"></file-upload>
-      </template>
+    <div class="fit-route">
+      <file-upload v-if="!gpxFile" @submit="onFileUpload" @error="onError"></file-upload>
+
       <template v-if="route">
-      <div class="d-flex flex-column w-100 flex-grow-1">
-        <!-- Editor controls -->
-        <div class="bg-light p-3">
-          <form novalidate>
-            <div class="d-flex justify-content-center py-2">
-              <input class="btn-check" id="km" type="radio" value="km" v-model="units">
-              <label class="btn btn-outline-secondary w-25 mx-1 px-2" :class="{ active: units == 'km' }" for="km">km</label>
-              <input class="btn-check" id="miles" type="radio" value="miles" v-model="units">
-              <label class="btn btn-outline-secondary w-25 mx-1 px-2" :class="{ active: units == 'miles' }" for="miles">miles</label>
-            </div>
-          </form>
+        <section class="route-panel">
+          <nav class="group connected units" role="radiogroup" aria-label="Units">
+            <button v-for="option in ['km', 'miles']" :key="option" type="button"
+                    :class="{ active: units === option }" role="radio" :aria-checked="units === option"
+                    @click="units = option">
+              <i v-if="units === option">check</i>
+              <span>{{ option }}</span>
+            </button>
+          </nav>
 
           <route-info :route="route" :units="units" @name="setName" @duration="setDuration"></route-info>
 
-          <form novalidate>
-            <div class="mb-1">
-              <label class="form-label">Include</label>
-              <div class="row">
-                <div class="col-6">
-                  <div class="form-check form-switch">
-                    <input class="form-check-input" type="checkbox" id="includeTiming" v-model="includeTiming" :disabled="true">
-                    <label class="form-check-label" for="includeTiming">Timing</label>
-                  </div>
-                </div>
-                <div class="col-6">
-                  <div class="form-check form-switch">
-                    <input class="form-check-input" type="checkbox" id="includeTurns" v-model="includeTurns">
-                    <label class="form-check-label" for="includeTurns">Turn Alerts</label>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </form>
-
-          <div class="mt-4 d-flex flex-column">
-            <div class="d-flex justify-content-around">
-              <button class="btn btn-secondary m-2" @click="onClear">Clear</button>
-              <button class="btn btn-primary m-2" @click="onFitDownload">Export FIT file</button>
-            </div>
-            <!-- Gadgetbridge tip for Android app -->
-            <div id="gadgetbridge-tip-settings" style="display: none; margin-top: 0.5rem; position: relative;" class="alert alert-info py-1">
-              <button type="button" class="btn-close" style="font-size: 0.7rem; padding: 0.3rem;" aria-label="Close" onclick="dismissGadgetbridgeTip()"></button>
-              <small class="text-muted">
-                Tip: use <a href="https://gadgetbridge.org/" target="_blank">Gadgetbridge</a> to send your FIT track to your Garmin device without Garmin Connect.
-              </small>
-            </div>
-            <a ref="downloadAnchor" class="d-none" download="COURSE.fit" href="#"></a>
+          <div class="switches">
+            <label class="switch-row">
+              <span class="switch">
+                <input type="checkbox" v-model="includeTiming" disabled>
+                <span></span>
+              </span>
+              <span>Timing</span>
+            </label>
+            <label class="switch-row">
+              <span class="switch">
+                <input type="checkbox" v-model="includeTurns">
+                <span></span>
+              </span>
+              <span>Turn alerts</span>
+            </label>
           </div>
-        </div>
-        <div class="flex-grow-1 w-100 d-flex">
-          <route-map :route="route" :units="units" class="flex-grow-1"></route-map>
-        </div>
-      </div>
+
+          <nav class="actions">
+            <button type="button" class="border max" @click="onClear">
+              <i>close</i>
+              <span>Clear</span>
+            </button>
+            <button type="button" class="max" @click="onFitDownload">
+              <i>{{ isNative ? 'share' : 'download' }}</i>
+              <span>Export FIT</span>
+            </button>
+          </nav>
+
+          <article v-if="showGadgetbridgeTip" class="tip secondary-container">
+            <i>lightbulb</i>
+            <p class="max">
+              Tip: use <a href="https://gadgetbridge.org/" target="_blank">Gadgetbridge</a> to send your FIT track
+              to your Garmin device without Garmin Connect.
+            </p>
+            <button type="button" class="transparent circle small" aria-label="Close" @click="dismissGadgetbridgeTip">
+              <i>close</i>
+            </button>
+          </article>
+          <a ref="downloadAnchor" hidden download="COURSE.fit" href="#"></a>
+        </section>
+
+        <route-map :route="route" :units="units"></route-map>
       </template>
     </div>
   </script>
 
   <script type="text/x-template" id="route-info-template">
-    <form novalidate>
-      <div class="d-flex flex-column">
-        <div class="mb-2">
-          <label class="form-label" for="routeName">Name</label>
-          <div class="position-relative">
-            <input id="routeName" type="text" v-model="routeName" @keydown.enter.prevent class="form-control text-primary" data-lpignore="true" style="padding-right: 30px;">
-            <i v-if="routeNameTooLong" class="fas fa-exclamation-triangle text-warning" 
-               title="Name will be truncated on Garmin device" 
-               aria-hidden="true"
-               style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer; z-index: 5;"
-               onclick="showNameWarning()"></i>
-          </div>
-          <!-- Name warning for Android app -->
-          <div id="name-warning-tip" style="display: none; margin-top: 0.25rem;" class="alert alert-warning py-1 mb-0">
-            <button type="button" class="btn-close" style="font-size: 0.7rem; padding: 0.3rem;" aria-label="Close" onclick="dismissNameWarning()"></button>
-            <small class="d-flex align-items-center">Name will be truncated on Garmin device</small>
-          </div>
+    <form novalidate class="route-info" @submit.prevent>
+      <div class="field label border" :class="{ invalid: routeNameTooLong, suffix: routeNameTooLong }">
+        <input id="routeName" type="text" v-model="routeName" placeholder=" " data-lpignore="true">
+        <label for="routeName">Name</label>
+        <i v-if="routeNameTooLong">warning</i>
+        <span v-if="routeNameTooLong" class="helper">Too long, it will be truncated on Garmin devices</span>
+      </div>
+
+      <div class="field label fill">
+        <input id="distance" type="text" :value="distance" readonly placeholder=" ">
+        <label for="distance">Distance</label>
+        <span class="unit">{{ units }}</span>
+      </div>
+
+      <div class="field-pair">
+        <div class="field label border">
+          <input id="speed" type="text" inputmode="decimal" v-model="avgSpeedField" placeholder=" " data-lpignore="true">
+          <label for="speed">Avg speed</label>
+          <span class="unit">{{ speedUnits }}</span>
         </div>
-        <div class="mb-2">
-          <label class="form-label" for="distance">Distance</label>
-          <div class="input-group">
-            <input id="distance" type="text" v-model="distance" readonly class="form-control text-primary bg-light">
-            <div class="input-group-text" style="min-width: 3rem;">{{ units }}</div>
-          </div>
-        </div>
-        <div class="row mb-2">
-          <div class="col-6">
-            <label class="form-label" for="speed">Avg Speed</label>
-            <div class="input-group">
-              <input id="speed" type="text" v-model="avgSpeedField" class="form-control text-primary" data-lpignore="true">
-              <div class="input-group-text" style="min-width: 3rem;">{{ speedUnits }}</div>
-            </div>
-          </div>
-          <div class="col-6">
-            <label class="form-label" for="time">Goal Time</label>
-            <input id="time" type="text" v-model="goalTime" readonly class="form-control text-primary bg-light">
-          </div>
+        <div class="field label fill">
+          <input id="time" type="text" :value="goalTime" readonly placeholder=" ">
+          <label for="time">Goal time</label>
         </div>
       </div>
     </form>
   </script>
 
   <script type="text/x-template" id="route-map-template">
-    <div id="route-map" class="bg-light w-100 flex-grow-1"></div>
-  </script>
-
-  <script>
-    // Check if we're in an Android app
-    function isAndroidApp() {
-      return (typeof Capacitor !== 'undefined' && Capacitor.getPlatform && Capacitor.getPlatform() === 'android') ||
-             (window.androidBridge || (/android/i.test(navigator.userAgent) && /capacitor/i.test(navigator.userAgent)));
-    }
-
-    // Check if user has dismissed the Gadgetbridge tip
-    function hasDismissedGadgetbridgeTip() {
-      return localStorage.getItem('gadgetbridgeTipDismissed') === 'true';
-    }
-
-    // Dismiss the Gadgetbridge tip and remember preference
-    function dismissGadgetbridgeTip() {
-      const tipElement = document.getElementById('gadgetbridge-tip-settings');
-      if (tipElement) {
-        tipElement.style.display = 'none';
-      }
-      localStorage.setItem('gadgetbridgeTipDismissed', 'true');
-    }
-
-    // Check if user has seen the name warning before
-    function hasSeenNameWarning() {
-      return localStorage.getItem('nameWarningSeen') === 'true';
-    }
-
-    // Show name warning (first time automatically, then only when icon clicked)
-    function showNameWarning() {
-      const warningElement = document.getElementById('name-warning-tip');
-      if (warningElement) {
-        warningElement.style.display = 'block';
-      }
-    }
-
-    // Dismiss the name warning and remember preference
-    function dismissNameWarning() {
-      const warningElement = document.getElementById('name-warning-tip');
-      if (warningElement) {
-        warningElement.style.display = 'none';
-      }
-      localStorage.setItem('nameWarningSeen', 'true');
-    }
-
-    // Show name warning automatically first time it appears
-    function checkAndShowNameWarning() {
-      const warningElement = document.getElementById('name-warning-tip');
-      const warningIcon = document.querySelector('.fa-exclamation-triangle.text-warning');
-      
-      if (warningElement && warningIcon && isAndroidApp() && !hasSeenNameWarning()) {
-        // Wait a bit for Vue to update the DOM
-        setTimeout(() => {
-          if (warningIcon.isConnected) { // Check if icon is still in DOM (name still too long)
-            warningElement.style.display = 'block';
-          }
-        }, 100);
-      }
-    }
-
-    // Show Gadgetbridge tip only in Android app and if not dismissed
-    function showGadgetbridgeTip() {
-      const gadgetbridgeTipSettings = document.getElementById('gadgetbridge-tip-settings');
-      
-      if (isAndroidApp() && gadgetbridgeTipSettings && !hasDismissedGadgetbridgeTip()) {
-        gadgetbridgeTipSettings.style.display = 'block';
-      } else if (gadgetbridgeTipSettings) {
-        gadgetbridgeTipSettings.style.display = 'none';
-      }
-    }
-
-    // Initialize all tips and warnings
-    function initializeTips() {
-      showGadgetbridgeTip();
-      checkAndShowNameWarning();
-    }
-
-    // Try to initialize when the page loads
-    document.addEventListener('DOMContentLoaded', initializeTips);
-    
-    // Also try after delays in case Vue hasn't rendered yet
-    setTimeout(initializeTips, 500);
-    setTimeout(initializeTips, 1000);
-    
-    // Set up a MutationObserver to watch for DOM changes (for dynamic content)
-    const observer = new MutationObserver(function(mutations) {
-      mutations.forEach(function(mutation) {
-        if (mutation.addedNodes && mutation.addedNodes.length > 0) {
-          initializeTips();
-        }
-        // Also watch for attribute changes (like when name becomes too long)
-        if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
-          if (mutation.target.classList.contains('fa-exclamation-triangle')) {
-            checkAndShowNameWarning();
-          }
-        }
-      });
-    });
-    
-    // Start observing
-    observer.observe(document.body, {
-      childList: true,
-      subtree: true,
-      attributes: true,
-      attributeFilter: ['class']
-    });
+    <div id="route-map"></div>
   </script>
 </body>
 </html>

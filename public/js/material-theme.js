@@ -1,9 +1,13 @@
-// Material 3 color theme, generated with Material Color Utilities.
+// Material 3 color theme.
 //
-// On Android 12+ the seed is the system's dynamic color ("Material You"), and the scheme is generated
-// the same way Android does it (Tonal Spot). Elsewhere (browsers, older Android) the app's brand color
-// is used, keeping its saturation (Content). Every color role is set as a CSS variable on :root,
-// named after the role in kebab case (e.g. --primary, --on-primary-container, --surface-container-high).
+// On Android 14+ the system's own dynamic color roles ("Material You") are used, exactly as other apps
+// get them; the few roles Android doesn't publish are generated from its seed color with Material Color
+// Utilities. On Android 12 and 13 only the seed is available, so the scheme is generated the way Android
+// does it by default (Tonal Spot). Elsewhere (browsers, older Android) the app's brand color is used,
+// keeping its saturation (Content). Every color role is set as a CSS variable on <body>,
+// named after the role in kebab case (e.g. --primary, --on-primary-container, --surface-container-high),
+// which are the same names BeerCSS uses. They're set on <body> because BeerCSS defines its own
+// defaults on body.light and body.dark.
 import {
   argbFromHex,
   hexFromArgb,
@@ -31,41 +35,44 @@ const kebabCase = (name) => name.replace(/[A-Z]/g, (c) => `-${c.toLowerCase()}`)
 const nativeTheme = () => window.Capacitor?.isNativePlatform?.() && window.Capacitor.Plugins.ThemeColor;
 const systemDark = () => window.matchMedia?.('(prefers-color-scheme: dark)').matches ?? false;
 
-let current = { isDark: systemDark(), seedColor: null };
+let current = { isDark: systemDark(), seedColor: null, light: null, dark: null };
 
 function createScheme(seedColor, isDark) {
   const Scheme = seedColor ? SchemeTonalSpot : SchemeContent;
   return new Scheme(Hct.fromInt(argbFromHex(seedColor ?? BRAND_COLOR)), isDark, 0);
 }
 
-function apply({ isDark, seedColor }) {
-  current = { isDark, seedColor: seedColor ?? null };
-  const scheme = createScheme(current.seedColor, isDark);
-  const color = (role) => hexFromArgb(MaterialDynamicColors[role].getArgb(scheme));
-
-  const root = document.documentElement;
-  for (const role of ROLES) {
-    root.style.setProperty(`--${kebabCase(role)}`, color(role));
+// Color of a role: the system's own (Android 14+), or generated from the seed.
+// The generated scheme is kept in `cache`, to create it only once when getting several roles.
+function roleColor(role, isDark, cache = {}) {
+  const system = (isDark ? current.dark : current.light)?.[role];
+  if (system) {
+    return system;
   }
-  // Variables used by the existing styles that aren't Material roles
-  root.style.setProperty('--surface-disabled', color('surfaceContainerLow'));
-  root.style.setProperty('--bs-primary', color('primary'));
-  root.style.setProperty('--bs-body-bg', color('surface'));
-  root.style.setProperty('--bs-body-color', color('onSurface'));
-  root.style.setProperty('--bs-light', color('surface'));
+  cache.scheme ??= createScheme(current.seedColor, isDark);
+  return hexFromArgb(MaterialDynamicColors[role].getArgb(cache.scheme));
+}
 
-  const theme = isDark ? 'dark' : 'light';
-  root.classList.remove('dark-theme', 'light-theme');
-  root.classList.add(`${theme}-theme`);
-  root.dataset.theme = theme;
+function apply({ isDark, seedColor, light, dark }) {
+  current = { isDark, seedColor: seedColor ?? null, light: light ?? null, dark: dark ?? null };
+  const cache = {};
+  const color = (role) => roleColor(role, isDark, cache);
+
+  const body = document.body;
+  for (const role of ROLES) {
+    body.style.setProperty(`--${kebabCase(role)}`, color(role));
+  }
+
+  body.classList.toggle('dark', isDark);
+  body.classList.toggle('light', !isDark);
+  document.documentElement.style.colorScheme = isDark ? 'dark' : 'light';
 
   updateSystemBars();
 }
 
 // The status bar keeps the light scheme's primary color in both modes, so its light icons are always readable.
 export function statusBarColor() {
-  const scheme = createScheme(current.seedColor, false);
-  return hexFromArgb(MaterialDynamicColors.primary.getArgb(scheme));
+  return roleColor('primary', false);
 }
 
 async function updateSystemBars() {
@@ -86,7 +93,10 @@ async function loadTheme() {
   const ThemeColor = nativeTheme();
   if (ThemeColor) {
     try {
-      apply(await ThemeColor.getTheme());
+      const theme = await ThemeColor.getTheme();
+      const source = theme.light ? 'system color roles' : theme.seedColor ? 'system seed color' : 'brand color';
+      console.info(`Theme: ${source} (Android SDK ${theme.sdkVersion}, seed ${theme.seedColor ?? '-'})`);
+      apply(theme);
       return;
     } catch (error) {
       console.log('Native theme not available, using system theme:', error);
