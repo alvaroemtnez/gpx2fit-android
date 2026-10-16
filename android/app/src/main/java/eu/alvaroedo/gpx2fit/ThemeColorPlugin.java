@@ -71,7 +71,7 @@ public class ThemeColorPlugin extends Plugin {
     private JSObject getTheme(Configuration configuration) {
         Context context = getContext();
         JSObject theme = new JSObject();
-        theme.put("isDark", (configuration.uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES);
+        theme.put("isDark", isDark(configuration));
         theme.put("sdkVersion", Build.VERSION.SDK_INT);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
@@ -91,6 +91,41 @@ public class ThemeColorPlugin extends Plugin {
 
         theme.put("isDynamic", theme.has("seedColor"));
         return theme;
+    }
+
+    /**
+     * The status bar color the web app uses (the light scheme's primary color, see statusBarColor() in
+     * public/js/material-theme.js), so it can be applied before the web app loads. Null below Android 12,
+     * where there are no dynamic colors and the color in capacitor.config.json is used.
+     */
+    public static Integer getStatusBarColor(Context context) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            return context.getColor(android.R.color.system_primary_light);
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            // Tone 40 of the primary palette, the light scheme's primary color
+            return context.getColor(android.R.color.system_accent1_600);
+        }
+        return null;
+    }
+
+    /**
+     * The background (surface) color of the web app, so the WebView can show it before the page loads.
+     * Below Android 12, the surface of the scheme generated from the brand color.
+     */
+    public static int getSurfaceColor(Context context, boolean isDark) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            return context.getColor(isDark ? android.R.color.system_surface_dark : android.R.color.system_surface_light);
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            // Tones 99 (light) and 10 (dark) of the neutral palette
+            return context.getColor(isDark ? android.R.color.system_neutral1_900 : android.R.color.system_neutral1_10);
+        }
+        return isDark ? 0xFF111418 : 0xFFF8F9FF;
+    }
+
+    public static boolean isDark(Configuration configuration) {
+        return (configuration.uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES;
     }
 
     private static String hex(int color) {

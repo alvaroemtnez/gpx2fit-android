@@ -67,4 +67,7 @@ const app = createApp({
 });
 
 app.config.compilerOptions.whitespace = 'condense';
+
+// Mount once the theme is applied, so the app never shows with the default colors
+await themeReady.catch((error) => console.error('Error applying theme:', error));
 app.mount('#main');

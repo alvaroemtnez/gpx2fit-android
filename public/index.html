@@ -19,9 +19,10 @@
   <link rel="stylesheet" href="css/fit-route.css" />
 </head>
 
-<!-- Colors come from js/material-theme.js (Material 3 scheme, from the system's dynamic color on Android 12+) -->
-<body class="light">
-  <main id="main">
+<!-- Colors come from js/material-theme.js (Material 3 scheme, from the system's dynamic color on Android 12+),
+     which adds the light or dark class. v-cloak hides the uncompiled Vue template until the app is mounted. -->
+<body>
+  <main id="main" v-cloak>
     <div v-if="error" class="snackbar error active">
       <i>error</i>
       <div class="max">{{ error }}</div>

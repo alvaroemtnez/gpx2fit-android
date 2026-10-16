@@ -13,6 +13,21 @@ body {
   color: var(--on-surface);
 }
 
+:root {
+  color-scheme: light dark;
+}
+
+/* Until the theme is applied, show the page's default background (in the Android app, the WebView's,
+   which is set to the theme's background color) instead of BeerCSS's default colors */
+body:not(.light, .dark) {
+  background: transparent;
+}
+
+/* Hide the uncompiled Vue template until the app is mounted */
+[v-cloak] {
+  display: none !important;
+}
+
 /* BeerCSS sets display on some elements (e.g. links), which would override the hidden attribute */
 [hidden] {
   display: none !important;
