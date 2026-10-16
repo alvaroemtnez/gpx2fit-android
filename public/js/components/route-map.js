@@ -57,10 +57,15 @@ function mounted() {
 
   this.onThemeChange = ({ detail: { isDark } }) => applyTheme.call(this, MAP_THEMES[isDark ? 'dark' : 'light']);
   document.addEventListener('themechange', this.onThemeChange);
+
+  // The map's height changes with the panel (e.g. while typing), not only with the window
+  this.resizeObserver = new ResizeObserver(() => this.map.invalidateSize());
+  this.resizeObserver.observe(this.map.getContainer());
 }
 
 function unmounted() {
   document.removeEventListener('themechange', this.onThemeChange);
+  this.resizeObserver.disconnect();
 }
 
 function applyTheme({ tileStyle, routeColor }) {
