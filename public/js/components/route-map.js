@@ -5,7 +5,16 @@ const latlng = ({ lat, lon }) => [lat, lon];
 // CARTO basemaps API key, from js/config.js (not committed, see js/config.example.js).
 const CARTO_API_KEY = window.GPX2FIT_CONFIG?.cartoApiKey ?? '';
 
+// Map style and route color for the light and dark themes
+const MAP_THEMES = {
+  light: { tileStyle: 'voyager', routeColor: 'blue' },
+  dark: { tileStyle: 'dark_all', routeColor: '#5c9cff' }
+};
+
+const isDarkTheme = () => document.body.classList.contains('dark');
+
 function mounted() {
+  const theme = MAP_THEMES[isDarkTheme() ? 'dark' : 'light'];
   this.map = L.map('route-map', {
     zoomControl: false,
     fullscreenControl: true,
@@ -19,16 +28,17 @@ function mounted() {
     '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
     '&copy; <a href="https://carto.com/attributions">CARTO</a>'
   ];
-  this.tileLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png?key={key}', {
+  this.tileLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/{style}/{z}/{x}/{y}{r}.png?key={key}', {
     attribution: attributions.join(' | '),
     subdomains: 'abcd',
+    style: theme.tileStyle,
     key: CARTO_API_KEY,
     maxZoom: 19
   }).addTo(this.map);
 
   const points = this.route.points;
 
-  this.routeLayer = L.polyline(points.map(latlng), { color: 'blue' }).addTo(this.map);
+  this.routeLayer = L.polyline(points.map(latlng), { color: theme.routeColor }).addTo(this.map);
   this.distanceLayer = L.layerGroup().addTo(this.map);
   this.turnsLayer = L.layerGroup();
 
@@ -44,6 +54,21 @@ function mounted() {
   });
 
   this.map.fitBounds(this.routeLayer.getBounds());
+
+  this.onThemeChange = ({ detail: { isDark } }) => applyTheme.call(this, MAP_THEMES[isDark ? 'dark' : 'light']);
+  document.addEventListener('themechange', this.onThemeChange);
+}
+
+function unmounted() {
+  document.removeEventListener('themechange', this.onThemeChange);
+}
+
+function applyTheme({ tileStyle, routeColor }) {
+  if (this.tileLayer.options.style !== tileStyle) {
+    this.tileLayer.options.style = tileStyle;
+    this.tileLayer.redraw();
+  }
+  this.routeLayer.setStyle({ color: routeColor });
 }
 
 function midpoint(fraction, { lat: lat1, lon: lon1 }, { lat: lat2, lon: lon2 }) {
@@ -135,6 +160,7 @@ const RouteMap = {
     units: String
   },
   mounted,
+  unmounted,
   data: () => ({
     zoom: null
   }),

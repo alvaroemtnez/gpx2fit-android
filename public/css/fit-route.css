@@ -255,9 +255,10 @@ route-map,
   background-color: var(--surface-container-highest) !important;
 }
 
-/* Leaflet's layers icon is a black image: invert it in dark mode, starting from the inverse surface
-   color so the background ends up dark (hue-rotate keeps the scheme's tint) */
-body.dark .leaflet-control-layers-toggle {
+/* Leaflet's layers and fullscreen icons are black images: invert them in dark mode, starting from the
+   inverse surface color so the background ends up dark (hue-rotate keeps the scheme's tint) */
+body.dark .leaflet-control-layers-toggle,
+body.dark .fullscreen-icon {
   background-color: var(--inverse-surface) !important;
   filter: invert(1) hue-rotate(180deg);
 }
@@ -305,4 +306,15 @@ body.dark .leaflet-control-layers-toggle {
   border-color: #444 transparent transparent transparent;
   border-width: 10px 6px 0 6px;
   margin-left: -6px;
+}
+
+/* On the dark map, dark labels with a light border */
+body.dark .map-label-content {
+  background-color: var(--surface-container-high);
+  color: var(--on-surface);
+  border-color: var(--outline);
+}
+
+body.dark .map-label-arrow {
+  border-top-color: var(--outline);
 }

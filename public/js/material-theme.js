@@ -66,6 +66,8 @@ function apply({ isDark, seedColor, light, dark }) {
   body.classList.toggle('dark', isDark);
   body.classList.toggle('light', !isDark);
   document.documentElement.style.colorScheme = isDark ? 'dark' : 'light';
+  // For parts that can't follow the theme with CSS alone, like the map
+  document.dispatchEvent(new CustomEvent('themechange', { detail: { isDark } }));
 
   updateSystemBars();
 }
