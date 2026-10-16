@@ -40,6 +40,19 @@ async function onFileUpload(gpxFile) {
   }
 }
 
+// Load GPX files shared from other Android apps ("Share" or "Open with").
+async function onSharedFile({ name, data, error }) {
+  if (error) {
+    this.$emit('error', `Unable to open shared file: ${error}`);
+    return;
+  }
+  const blob = await (await fetch(`data:application/gpx+xml;base64,${data}`)).blob();
+  // Clear any open route first, so the map is recreated for the new one.
+  this.gpxFile = this.route = null;
+  await this.$nextTick();
+  await this.onFileUpload(new File([blob], name, { type: 'application/gpx+xml' }));
+}
+
 async function onFitDownload() {
   const optionalTime = (value) => (this.includeTiming ? value : undefined);
 
@@ -183,6 +196,7 @@ const FitRoute = {
     onFileUpload,
     onError,
     onFitDownload,
+    onSharedFile,
     setName,
     setDuration
   },
@@ -190,6 +204,15 @@ const FitRoute = {
     FileUpload,
     RouteInfo,
     RouteMap
+  },
+  async mounted() {
+    const SharedFile = window.Capacitor?.isNativePlatform?.() && window.Capacitor.Plugins.SharedFile;
+    if (SharedFile) {
+      this.sharedFileListener = await SharedFile.addListener('fileReceived', this.onSharedFile);
+    }
+  },
+  unmounted() {
+    this.sharedFileListener?.remove();
   }
 };
 
