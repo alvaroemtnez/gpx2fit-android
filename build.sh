@@ -17,7 +17,7 @@ TOOLS_DIR="$ROOT/.tools"
 # Capacitor 7 compiles for Java 21 (and Gradle 8.13 can't run on JDK 24+).
 JDK_VERSION=21
 # Capacitor 7 CLI requires Node.js 20+.
-NODE_VERSION=22
+NODE_VERSION=24
 CMDLINE_TOOLS_VERSION=13114758
 
 JDK_DIR="$TOOLS_DIR/jdk-$JDK_VERSION"

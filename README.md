@@ -19,7 +19,7 @@ Everything is done with `build.sh`, no Android Studio needed. The only requireme
 The first time, the script downloads everything else into the `.tools/` folder inside the repository (around 2.5 GB, ignored by git):
 
 - [Eclipse Temurin JDK 21](https://adoptium.net/). Capacitor 7 compiles for Java 21, and the Gradle version used (8.13) can't run on JDK 24 or newer.
-- [Node.js 22](https://nodejs.org/), for npm and the Capacitor CLI.
+- [Node.js 24](https://nodejs.org/), for npm and the Capacitor CLI.
 - The Android SDK command line tools, plus the platform, build-tools and platform-tools packages (the SDK licenses are accepted automatically).
 - The Gradle and npm caches.
 
