@@ -33,6 +33,7 @@ export npm_config_cache="$TOOLS_DIR/npm-cache"
 export PATH="$NODE_DIR/bin:$JDK_DIR/bin:$PATH"
 
 info() { printf '\033[1;34m==>\033[0m %s\n' "$*"; }
+warn() { printf '\033[1;33mWarning:\033[0m %s\n' "$*" >&2; }
 die() { printf '\033[1;31mError:\033[0m %s\n' "$*" >&2; exit 1; }
 
 require() {
@@ -118,9 +119,21 @@ web_deps() {
     fi
 }
 
+# Create public/js/config.js (not committed) from the CARTO_API_KEY environment variable, if set.
+web_config() {
+    local config="$ROOT/public/js/config.js"
+    if [ -n "${CARTO_API_KEY:-}" ]; then
+        info "Writing CARTO API key to public/js/config.js"
+        sed "s/cartoApiKey: ''/cartoApiKey: '$CARTO_API_KEY'/" "$ROOT/public/js/config.example.js" > "$config"
+    elif [ ! -f "$config" ]; then
+        warn "public/js/config.js not found, the map will show 'API KEY REQUIRED'. See README.md."
+    fi
+}
+
 # Download the offline web dependencies, install npm packages and copy the web app into the Android project.
 prepare_web() {
     web_deps
+    web_config
     info "Installing npm dependencies"
     (cd "$ROOT" && npm ci)
     info "Syncing web app into the Android project"
@@ -132,6 +145,7 @@ serve() {
     require curl tar unzip
     setup_node
     web_deps
+    web_config
     (cd "$ROOT" && npm ci && npm start)
 }
 

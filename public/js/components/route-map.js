@@ -2,6 +2,9 @@
 
 const latlng = ({ lat, lon }) => [lat, lon];
 
+// CARTO basemaps API key, from js/config.js (not committed, see js/config.example.js).
+const CARTO_API_KEY = window.GPX2FIT_CONFIG?.cartoApiKey ?? '';
+
 function mounted() {
   this.map = L.map('route-map', {
     zoomControl: false,
@@ -16,9 +19,10 @@ function mounted() {
     '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
     '&copy; <a href="https://carto.com/attributions">CARTO</a>'
   ];
-  this.tileLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+  this.tileLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png?key={key}', {
     attribution: attributions.join(' | '),
     subdomains: 'abcd',
+    key: CARTO_API_KEY,
     maxZoom: 19
   }).addTo(this.map);
 

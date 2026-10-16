@@ -39,6 +39,16 @@ Each build downloads the offline web dependencies (`setup-offline.sh`) if they a
 
 For `serve`, if you want the server exposed on another IP or port, export the variables `C9_IP` or `C9_PORT`.
 
+### Map API key
+
+The map needs a [CARTO API key](https://carto.com/basemaps/apikey) (free for non-commercial use), which is kept out of git. Without it, the map shows "API KEY REQUIRED". Either copy `public/js/config.example.js` to `public/js/config.js` and fill in the key, or pass it to the script, which writes that file for you:
+
+```console
+$ CARTO_API_KEY=your_key ./build.sh
+```
+
+Note that the key can't be really secret: it's sent with every map tile request, so it's visible in the built app.
+
 ### Release builds
 
 A release APK must be signed with your own key. Create a keystore once, using the bundled JDK (keep it safe, outside the repository: you need the same key to install updates over a previous version):
@@ -65,8 +75,8 @@ Documentation of the FIT file format is contained in the FIT SDK
 ([download](https://www.thisisant.com/resources/fit/)), and this implementation  
 does the bare minimum required.
 
-The mapping uses [CARTO](https://github.com/CartoDB/basemap-styles) raster tiles,  
-which are free for up to 75,000 mapviews per month for non-commercial use.
+The mapping uses [CARTO](https://github.com/CartoDB/basemap-styles) raster tiles, which require an [API key](https://carto.com/basemaps/apikey)  
+(free for up to 5M requests per month for non-commercial use). See [Map API key](#map-api-key).
 
 ## Third Party Libraries
 

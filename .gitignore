@@ -21,6 +21,9 @@ public/css/images/marker-icon.png
 public/css/images/marker-shadow.png
 public/css/icon-fullscreen.svg
 
+# Local configuration with the CARTO API key (see public/js/config.example.js)
+public/js/config.js
+
 # Temporary files
 fontawesome.zip
 *.tmp
